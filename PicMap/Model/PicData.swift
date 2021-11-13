@@ -10,6 +10,7 @@ import Photos
 import SwiftyJSON
 import Firebase
 import FirebaseStorage
+import NMapsMap
 
 
 class PicData {
@@ -22,6 +23,7 @@ class PicData {
     var date:Date?
     var memo:String?
     var markerId:Int?
+    var marker:NMFMarker?
     
     init(){
         self.asset = nil
@@ -132,7 +134,7 @@ class PicData {
         return image
     }
     
-    func toData() -> Data {
+    func toData() -> Data? {
         if let asset = self.asset {
             let manager = PHImageManager.default()
             let option = PHImageRequestOptions()
@@ -143,6 +145,7 @@ class PicData {
             })
             return image.jpegData(compressionQuality: 0.8)!
         }
+        return nil
     }
     
     /*

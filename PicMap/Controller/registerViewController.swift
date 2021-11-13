@@ -7,6 +7,7 @@
 
 import UIKit
 import Firebase
+import FirebaseAuth
 class registerViewController: UIViewController{
     
 
@@ -33,7 +34,6 @@ class registerViewController: UIViewController{
                     //self.navigationController?.popViewController(animated: false) 회원가입버튼누르면 걍 들어가져서 강제로 팝 뷰함2021.10.30버튼에서 뷰컨으로 세그를 건드는게 아니라 뷰컨에서 뷰컨으로 세그를 만들어야했었음 ;; 
                     
                 }else{
-                    postData.userId = email
                     UserDefaults.standard.set(email, forKey: "userEmail")
                     self.performSegue(withIdentifier: "registerToMap", sender: self)
                 }

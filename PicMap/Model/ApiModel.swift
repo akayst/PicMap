@@ -32,7 +32,7 @@ struct ApiModel{
  */
     
     func getAll() -> JSON {
-        let url : String = "http://3.35.168.181/api/v1/record/" + UserDefaults.standard.string(forKey: "userEmail")!
+        let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
         var json:JSON = JSON()
         AF.request(url,
                    method: .get,
@@ -46,12 +46,13 @@ struct ApiModel{
         return json
     }
     
-    func postMarker(_ pic:PicData) {
+    func postMarker(_ pic:PicData) -> Int {
+        var markerId:Int = 0
         let parameter: Parameters = [
             "userId":       pic.ownerID,
             "longitude":    pic.longitude!, // 로컬 이미지 선택후  메모 알람창이 뜨기직전에 저장됨
             "latitude":     pic.latitude!, // 로컬 이미지 선택 후 메모 알람창이 뜨기직전에 저장됨
-            "memo":         pic.memo!, // 메모알람창이 뜬 후 버튼클릭시에 저장됨
+            "memo":         pic.memo, // 메모알람창이 뜬 후 버튼클릭시에 저장됨
             //"loadAddress":postData.loadAddress
         ]
         let url: String = "http://3.35.168.181/api/v1/record"
@@ -65,9 +66,15 @@ struct ApiModel{
                     ]
         ).validate(statusCode: 200..<300)
         .responseJSON(completionHandler: { (result) in
+            let json = JSON(result.data)
+            markerId = json["id"].intValue
+            pic.markerId = markerId
             print("post result")
             print(result)
+            print("id = \(markerId)")
+            self.postImg(pic)
         })
+        return markerId
     }
     
     func postImg(_ pic:PicData) {
@@ -75,6 +82,7 @@ struct ApiModel{
         
         let parameter: [String:Any] = ["userId": pic.ownerID!,
                                        "recordId": pic.markerId!]
+        print("pic.ownerID = [\(pic.ownerID)]\npic.markerId = [\(pic.markerId)]")
         
         AF.upload(multipartFormData: { multipart in
             //IMAGE PART
@@ -87,8 +95,13 @@ struct ApiModel{
                 }
             }
             
-            let data = pic.toData()
-            multipart.append(data, withName: "images", fileName: "\(data).jpg", mimeType: "images/jpeg")
+            if let data = pic.toData() {
+                multipart.append(data, withName: "images", fileName: "\(data).jpg", mimeType: "images/jpeg")
+            } else {
+                print("failed picData to data")
+                return
+            }
+            
         },
         to: url,
         headers: ["Content-Type" : "multipart/form-data"])
