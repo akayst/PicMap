@@ -8,6 +8,7 @@
 import UIKit
 import NMapsMap
 import Firebase
+import FirebaseFirestore
 import MaterialComponents.MaterialBottomSheet
 import Alamofire
 import SwiftyJSON
@@ -15,17 +16,16 @@ import Photos
 import BSImagePicker
 import FirebaseStorage
 
-protocol Sequense{
-    
-}
 
 var paramSender1 = UIApplication.shared.delegate as? AppDelegate// 딕셔너리형 데이터에서 콜렉션네임의 값을 불러옴
-class mapViewController: UIViewController,Sequence{
+class mapViewController: UIViewController, NMFMapViewCameraDelegate {
 
     @IBOutlet weak var mapView: NMFMapView!
     let db = Firestore.firestore()
     let infoWindow = NMFInfoWindow()
     let dataSource = NMFInfoWindowDefaultTextSource.data()
+    let userEmail = UserDefaults.standard.string(forKey: "userEmail")
+    var api: ApiModel =  ApiModel()
     
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
@@ -33,7 +33,6 @@ class mapViewController: UIViewController,Sequence{
         super.viewDidLoad()
         // Do any additional setup after loading the view.
        
-        postData.userId = (UserDefaults.standard.string(forKey: "userEmail"))!
         //print(postData.userId)
         mapView.mapType = .navi
         mapView.isIndoorMapEnabled = true
@@ -47,21 +46,12 @@ class mapViewController: UIViewController,Sequence{
     }
 
     override func viewWillAppear(_ animated: Bool) { //맵컨트롤러가 리로드 될때마다 맵뷰에서 새로운 앱을 가져옴
-        loadMapping()
+        let allJson = api.getAll()
+        for (_, subJson): (String, JSON) in allJson {
+            paramSender1?.MyPics.append(PicData(json: subJson))
+        }
     }
     
-    func loadMapping(){
-        //기존에 있던 더미메시지를 지우기 초기화
-        
-        getResponse()
-        
-        /*
-        for pic in paramSender1!.MyPics {
-            editMarker(Double(pic.latitude!), Double(pic.longitude!), pic.memo!)
-        }
- */
-        
-    }
     func cameraPosition(_ latitude:Double,_ longitude:Double){
         let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
         cameraUpdate.animation = .fly
@@ -87,11 +77,6 @@ class mapViewController: UIViewController,Sequence{
                 if marker1.iconImage.reuseIdentifier == "\(sdkBundle.bundleIdentifier ?? "").mSNormal"{
                     self.cameraPosition(latitude, longitude)
                     marker1.iconImage = NMFOverlayImage(name:"mSNormalNight", in: Bundle.naverMapFramework())
-                    let paramLat1 = UIApplication.shared.delegate as? AppDelegate
-                    let paramLon1 = UIApplication.shared.delegate as? AppDelegate
-                    postData.latitude = latitude
-                    postData.longitude = longitude
-                    print(">>>test \(paramLat1!)")
                     let vc = self.storyboard?.instantiateViewController(withIdentifier: "bottomsheetViewController") as! UIViewController
                     // MDC 바텀 시트로 실행
 
@@ -137,52 +122,33 @@ class mapViewController: UIViewController,Sequence{
             print("Canceled with sefgvlections: \(assets)")
         }, finish: { (assets) in
             
-            var images = [UIImage]()
-            images = self.getAssetThumbnail(assets: assets)
-            var data = [Data]()
-            for i in images.count{
-                let imageData = images[i].jpegData(compressionQuality: 0.5)
-                data.append(imageData!)
+            for asset in assets {
+                self.dismiss(animated: true, completion: nil)
                 
-            }
-            let latData = assets.last?.location?.coordinate.latitude
-            let lonData = assets.last?.location?.coordinate.longitude
-            print("Finished with selections: \(assets) 위도값> \(String(describing: latData))경도값\(String(describing:lonData))")
-            self.dismiss(animated: true, completion: nil)
-            
-            if latData != nil{
-            let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세요.", preferredStyle: .alert)
-                titleAlert.addTextField {UITextField in
-                    UITextField.placeholder = "메모설정"
-                    
+                if asset.location != nil {
+                    let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세여.", preferredStyle: .alert)
+                    titleAlert.addTextField { UITextField in
+                        UITextField.placeholder = "메모설정"
+                    }
+                    titleAlert.addTextField { UITextField in
+                        UITextField.placeholder = "보여질 친구의 이메일"
+                    }
+                    let ok = UIAlertAction(title: "업로드", style: .default) { UIAlertAction in
+                        let title = titleAlert.textFields?[0].text
+                        let friend = titleAlert.textFields?[1].text
+                        self.editMarker((asset.location?.coordinate.latitude)!, (asset.location?.coordinate.longitude)!, title!)
+                        
+                        print("title > \(title) 변경후 \(title as! String)")
+                        //이미지post 함수 실행
+                        self.api.postImg(PicData(asset: asset))
+                    }
+                    titleAlert.addAction(ok)
+                    self.present(titleAlert, animated: true, completion: nil)
+                    self.dismiss(animated: true, completion: nil)
+                } else {
+                    print("위경도 값이 없습니다")
                 }
-                
-            titleAlert.addTextField{ UITextField in
-                UITextField.placeholder = "보여질 친구의 이메일"
             }
-            
-            let ok = UIAlertAction(title: "업로드", style: .default) { UIAlertAction in
-                
-                let title = titleAlert.textFields?[0].text
-                let friend = titleAlert.textFields?[1].text
-                self.editMarker(latData!, lonData!, title!)
-                
-                print("title > \(title) 변경후 \(title as! String)")
-                postData.memo = title as! String
-                self.sendRequest()
-            }
-            titleAlert.addAction(ok)
-            self.present(titleAlert, animated: true, completion: nil)
-            self.dismiss(animated: true, completion: nil)
-            postData.latitude = latData!
-            postData.longitude = lonData!
-            
-            }
-            else{
-                print("위도경도값 존재하지 않습니다.")
-            }
-
-        })
     }
     
     func sendRequest(){ //로컬 이미지 선택 후 메모알람창까지 받은 후 api통신 포스트로 보냄
@@ -239,7 +205,8 @@ class mapViewController: UIViewController,Sequence{
                     let lonP = subJson["longitude"].doubleValue
                     let userP = subJson["userId"].stringValue
                     let memoP = subJson["memo"].stringValue
-                    
+                    let markerId = subJson["id"].intValue
+                    postData.id = markerId
                     print("\(latP)\(lonP)\(userP)\(memoP)")
                     editMarker(latP, lonP, memoP)
                     param.MyPics.append(PicData().jsonParse(json: subJson))
@@ -251,11 +218,47 @@ class mapViewController: UIViewController,Sequence{
         }
     }
     //이미지를 api상에 업로드하는 함수
-    func imgPost(){
+    func imgPost(_ data:[Data]){
         
-        let url = ""
+        let url = "http://3.35.168.181/api/v1/record/post/images"
         
-        //AF.up
+        let parameter: [String:Any] = ["userId": postData.userId!,
+                                       "recordId": postData.id!]
+        
+
+        AF.upload(multipartFormData: { multipart in
+                    //IMAGE PART
+            for (key,value) in parameter{
+                if let temp = value as? String{
+                    multipart.append(temp.data(using:.utf8)!, withName: key)
+                }
+                    if let temp = value as? Int{
+                        multipart.append("\(temp)".data(using: .utf8)!, withName: key)
+                    }
+                }
+        
+            
+                for images in data {
+                    multipart.append(images,
+                                    withName: "images",
+                                        fileName: "\(images).jpg",
+                                            mimeType: "images/jpeg")
+                    }
+                 }, to: url
+                  , headers: ["Content-Type" : "multipart/form-data"]).uploadProgress(queue: .main, closure: { progress in
+                  
+                print("Upload Progress: \(progress.fractionCompleted)")
+                
+                 }).responseJSON(completionHandler: { data in
+                     switch data.result {
+                    case .success(_):
+                        do {
+                            print("success \(data.result)")
+                        }
+                    case .failure(let error):
+                        print(error.localizedDescription)
+                    }
+                 })
         
     }
     //PHAsset->UIImage->데이터배열로 변환하는 함수
@@ -276,13 +279,20 @@ class mapViewController: UIViewController,Sequence{
                                     arrayOfImages.append(image)
                                             })
                         }
-        var images = [UIImage]()
+        var images = [UIImage]() // image1, image2. image3 ...
         images = arrayOfImages
-        var data =
-        for img in images{
-            let imageData = img
+        var data = [Data]()
+        for img in images {
+            let imageData = img.jpegData(compressionQuality: 0.8)
+            data.append(imageData!)
         }
+        return data
         
         
         }
+    func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
+        let projection = mapView.projection
+        let bound = projection.latlngBounds(fromViewBounds: mapView.frame)
+
+    }
 }

@@ -8,7 +8,7 @@
 import UIKit
 import Firebase
 import NMapsMap
-
+import FirebaseFirestore
 
 class bottomsheetViewController: UIViewController{
     let db = Firestore.firestore()
@@ -26,7 +26,13 @@ class bottomsheetViewController: UIViewController{
         IdBottom.text = "\(postData.userId!)"
         latBottom.text = "\(postData.latitude!)"
         lonBottom.text = "\(postData.longitude!)"
-      
+        // 이미지 post된거 get함수 실행
+        // 로컬의 이미지인지? 다른사람의 이미지인지 확인작업
+        //
+        //UIImage로 변환
+        // 스택뷰 써서 넣기
+        //
+        
     }
     
     
