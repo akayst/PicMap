@@ -33,7 +33,7 @@ struct ApiModel{
         let sema = DispatchSemaphore(value:0)
         var json:JSON = JSON()
         let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
-        DispatchQueue.main.async {
+        DispatchQueue.global().async {
             print("request now")
             AF.request(url,
                        method: .get,

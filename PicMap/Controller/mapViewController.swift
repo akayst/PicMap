@@ -37,8 +37,8 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             allJson = self.api.getAll()
             for (_, subJson) in allJson {
                 self.singleton.MyPics.append(PicData(json: subJson))
-                print("append Pic elem")
             }
+            print("PicCount=\(self.singleton.MyPics.count)")
         }
         
         
@@ -62,48 +62,45 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         mapView.moveCamera(cameraUpdate)
     }
     
-    func editMarker(_ pic: PicData, _ isBound: Bool) {
-        let sdkBundle = Bundle.naverMapFramework()
+    func editMarker(_ pic: inout PicData, _ isBound: Bool) {
+        // 화면 영역에 없을 시 마커를 해제합니다
         if !isBound {
             if let _ = pic.marker {
                 pic.marker!.mapView = nil
             }
             return
         }
-        pic.marker = NMFMarker()
-        print("marker")
-        print(pic.latitude!)
-        print(pic.longitude!)
+        if pic.marker == nil {
+            pic.marker = NMFMarker()
+        }
+        let sdkBundle = Bundle.naverMapFramework()
+        let lat = pic.latitude!
+        let lng = pic.longitude!
+        let owner = pic.ownerID
+        let memo = pic.memo!
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = NMF_MARKER_IMAGE_RED
         pic.marker!.mapView = mapView
-        //cameraPosition(latitude, longitude)
-        //dataSource.title = title
-        //infoWindow.dataSource = dataSource
-        
-        
         // 2021.11.09 마커 터치핸들러 이동시 -> 카메라 시점 변환 주기 -> cameraPosition()함수 제작
         pic.marker!.touchHandler = {(overlay) in
             if let marker1 = overlay as? NMFMarker{
                 if marker1.iconImage.reuseIdentifier == "\(sdkBundle.bundleIdentifier ?? "").mSNormal"{
-                    self.cameraPosition(pic.latitude!, pic.longitude!)
+                    self.cameraPosition(lat, lng)
                     marker1.iconImage = NMFOverlayImage(name:"mSNormalNight", in: Bundle.naverMapFramework())
                     //let vc = self.storyboard?.instantiateViewController(withIdentifier: "bottomsheetViewController") as! UIViewController
                     let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
                     // MDC 바텀 시트로 실행
-                    vc.userid = pic.ownerID
-                    vc.latS = String(pic.latitude!)
-                    vc.lngS = String(pic.longitude!)
-                    
+                    vc.userid = owner
+                    vc.latS = String(lat)
+                    vc.lngS = String(lng)
                     
                     let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
-                    
                     bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
                     // 보여주기
                     self.present(bottomSheet, animated: true, completion: nil)
-                    self.dataSource.title = pic.memo!
+                    self.dataSource.title = memo
                     self.infoWindow.dataSource = self.dataSource
-                    self.infoWindow.open(with: pic.marker!)
+                    self.infoWindow.open(with: marker1)
                 }else{
                     marker1.iconImage = NMFOverlayImage(name: "mSNormal", in: Bundle.naverMapFramework())
                     self.infoWindow.close()
@@ -163,12 +160,10 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     }
     
     func mapViewCameraIdle(_ mapView: NMFMapView) {
-        print("idle camera")
-        print(self.singleton.MyPics.count)
         let bound = mapView.contentBounds
-        for pic in self.singleton.MyPics {
-            if let lat = pic.latitude, let lng = pic.longitude {
-                editMarker(pic, bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
+        for i in 0..<self.singleton.MyPics.count {
+            if let lat = self.singleton.MyPics[i].latitude, let lng = self.singleton.MyPics[i].longitude {
+                editMarker(&self.singleton.MyPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
             }
         }
     }
