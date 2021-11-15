@@ -42,7 +42,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         }
         
         
-        
         mapView.addCameraDelegate(delegate: self)
         mapView.mapType = .navi
         mapView.isIndoorMapEnabled = true
