@@ -10,33 +10,27 @@ import Photos
 import SwiftyJSON
 import Firebase
 import FirebaseStorage
-import NMapsMap
 
 
 class PicData {
     var asset:PHAsset?
     var ownerID:String?
-    var imgPath:String?
+    var OPath:String?
     var localID:String?
-    var latitude:Double?
-    var longitude:Double?
+    var latitude:String?
+    var longitude:String?
     var date:Date?
     var memo:String?
-    var markerId:Int?
-    var marker:NMFMarker?
     
     init(){
         self.asset = nil
-    }
-    init(json: JSON) {
-        parseJson(json)
     }
     init(asset:PHAsset) {
         self.asset = asset
         self.localID = self.asset!.localIdentifier
         if let loc = self.asset!.location {
-            self.latitude = Double(loc.coordinate.latitude)
-            self.longitude = Double(loc.coordinate.longitude)
+            self.latitude = String(loc.coordinate.latitude)
+            self.longitude = String(loc.coordinate.longitude)
         }
         if let date = self.asset!.creationDate {
             self.date = date
@@ -49,15 +43,14 @@ class PicData {
         self.asset = result[0]
         
         if let loc = self.asset!.location {
-            self.latitude = Double(loc.coordinate.latitude)
-            self.longitude = Double(loc.coordinate.longitude)
+            self.latitude = String(loc.coordinate.latitude)
+            self.longitude = String(loc.coordinate.longitude)
         }
         if let userid = UserDefaults.standard.string(forKey: "userEmail") {
             self.ownerID = userid
         }
     }
     
-    /*
     func jsonParse(json:JSON)->PicData {
         let pic = PicData()
         pic.memo = json["memo"].stringValue
@@ -86,15 +79,6 @@ class PicData {
             return pic
         }
         
-    }
-    */
-    
-    func parseJson(_ json: JSON) {
-        self.ownerID = json["userId"].stringValue
-        self.markerId = json["id"].intValue
-        self.latitude = json["latitude"].doubleValue
-        self.longitude = json["longitude"].doubleValue
-        self.memo = json["memo"].stringValue
     }
     
     
@@ -134,21 +118,6 @@ class PicData {
         return image
     }
     
-    func toData() -> Data? {
-        if let asset = self.asset {
-            let manager = PHImageManager.default()
-            let option = PHImageRequestOptions()
-            var image = UIImage()
-            option.isSynchronous = true
-            manager.requestImage(for: asset, targetSize: CGSize(width: asset.pixelWidth, height: asset.pixelHeight), contentMode: .aspectFit, options: option, resultHandler: { (result, info) -> Void in
-                image = result!
-            })
-            return image.jpegData(compressionQuality: 0.8)!
-        }
-        return nil
-    }
-    
-    /*
     func loadPath()->String {
         var path:String = ""
         self.asset?.requestContentEditingInput(with: PHContentEditingInputRequestOptions(), completionHandler: {(input, info) in
@@ -159,5 +128,4 @@ class PicData {
         self.OPath = path
         return self.OPath!
     }
-     */
 }

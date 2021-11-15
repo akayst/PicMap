@@ -14,7 +14,8 @@ target 'PicMap' do
   pod'BSImagePicker'
   pod'lottie-ios'
   pod'Firebase/Storage'
-
+  pod'AWSS3Integration'
+  pod'AWSS3'
   post_install do |pi|
      pi.pods_project.targets.each do |t|
          t.build_configurations.each do |bc|
