@@ -8,12 +8,10 @@
 import UIKit
 import Firebase
 import Alamofire
+import FirebaseFirestore
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
-
-    var MyPics:[PicData] = []
     
     var latP:Double!
     var lonP:Double!
