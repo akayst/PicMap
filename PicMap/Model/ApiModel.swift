@@ -13,9 +13,6 @@ import Photos
 import NMapsMap
 
 
-var abc = mapViewController.self
-var param = UIApplication.shared.delegate as! AppDelegate
-
 struct ApiModel{
     
     /*
@@ -30,19 +27,34 @@ struct ApiModel{
     var date:Date?
     var markerId:Int?
  */
+    var allJson:JSON?
     
     func getAll() -> JSON {
-        let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
+        let sema = DispatchSemaphore(value:0)
         var json:JSON = JSON()
-        AF.request(url,
-                   method: .get,
-                   parameters: nil,
-                   encoding: JSONEncoding.default,
-                   headers: ["Content-Type":"application/json","Accept":"application/json"]
-        ).validate(statusCode: 200..<300)
-        .responseJSON { (response) in
-            json = JSON(response)
+        let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
+        DispatchQueue.global().async {
+            print("request now")
+            AF.request(url,
+                       method: .get,
+                       parameters: nil,
+                       encoding: JSONEncoding.default,
+                       headers: ["Content-Type":"application/json","Accept":"application/json"]
+            ).validate(statusCode: 200..<300)
+                .responseJSON { (response) in
+                    print("parse response")
+                    switch response.result {
+                    case .success(let value) :
+                        json = JSON(value)
+                        print("succes")
+                    case .failure(_) :
+                        print("failed json")
+                    }
+                    sema.signal()
+                }
         }
+        sema.wait(timeout: .now()+5)
+        print("json.count=\(json.count)")
         return json
     }
     

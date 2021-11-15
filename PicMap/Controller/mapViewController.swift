@@ -19,21 +19,31 @@ import FirebaseStorage
 
 class mapViewController: UIViewController, NMFMapViewCameraDelegate {
 
-    var paramSender1 = UIApplication.shared.delegate as? AppDelegate// 딕셔너리형 데이터에서 콜렉션네임의 값을 불러옴
+    //var paramSender1 = UIApplication.shared.delegate as? AppDelegate// 딕셔너리형 데이터에서 콜렉션네임의 값을 불러옴
+    let singleton = MySingleton.shared
     @IBOutlet weak var mapView: NMFMapView!
     let db = Firestore.firestore()
     let infoWindow = NMFInfoWindow()
     let dataSource = NMFInfoWindowDefaultTextSource.data()
     let userEmail = UserDefaults.standard.string(forKey: "userEmail")
-    var api: ApiModel =  ApiModel()
+    var api: ApiModel = ApiModel()
     
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
-        
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
-       
-        //print(postData.userId)
+        print(userEmail)
+        var allJson:JSON = JSON()
+        DispatchQueue.global().async {
+            allJson = self.api.getAll()
+            for (_, subJson) in allJson {
+                self.singleton.MyPics.append(PicData(json: subJson))
+            }
+            print("PicCount=\(self.singleton.MyPics.count)")
+        }
+        
+        
+        
+        mapView.addCameraDelegate(delegate: self)
         mapView.mapType = .navi
         mapView.isIndoorMapEnabled = true
         mapView.isNightModeEnabled = false
@@ -44,13 +54,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             
         } //지도 탭 했을때 정보창 닫히게 하는 함수
     }
-
-    override func viewWillAppear(_ animated: Bool) { //맵컨트롤러가 리로드 될때마다 맵뷰에서 새로운 앱을 가져옴
-        let allJson = api.getAll()
-        for (_, subJson): (String, JSON) in allJson {
-            paramSender1?.MyPics.append(PicData(json: subJson))
-        }
-    }
     
     func cameraPosition(_ latitude:Double,_ longitude:Double){
         let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
@@ -59,46 +62,45 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         mapView.moveCamera(cameraUpdate)
     }
     
-    func editMarker(_ pic: PicData, _ isBound: Bool) {
-        let sdkBundle = Bundle.naverMapFramework()
+    func editMarker(_ pic: inout PicData, _ isBound: Bool) {
+        // 화면 영역에 없을 시 마커를 해제합니다
         if !isBound {
-            pic.marker = nil
+            if let _ = pic.marker {
+                pic.marker!.mapView = nil
+            }
             return
         }
-        pic.marker! = NMFMarker()
-        print("marker")
-        print(pic.latitude!)
-        print(pic.longitude!)
+        if pic.marker == nil {
+            pic.marker = NMFMarker()
+        }
+        let sdkBundle = Bundle.naverMapFramework()
+        let lat = pic.latitude!
+        let lng = pic.longitude!
+        let owner = pic.ownerID
+        let memo = pic.memo!
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = NMF_MARKER_IMAGE_RED
         pic.marker!.mapView = mapView
-        //cameraPosition(latitude, longitude)
-        //dataSource.title = title
-        //infoWindow.dataSource = dataSource
-        
-        
         // 2021.11.09 마커 터치핸들러 이동시 -> 카메라 시점 변환 주기 -> cameraPosition()함수 제작
         pic.marker!.touchHandler = {(overlay) in
             if let marker1 = overlay as? NMFMarker{
                 if marker1.iconImage.reuseIdentifier == "\(sdkBundle.bundleIdentifier ?? "").mSNormal"{
-                    self.cameraPosition(pic.latitude!, pic.longitude!)
+                    self.cameraPosition(lat, lng)
                     marker1.iconImage = NMFOverlayImage(name:"mSNormalNight", in: Bundle.naverMapFramework())
                     //let vc = self.storyboard?.instantiateViewController(withIdentifier: "bottomsheetViewController") as! UIViewController
                     let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
                     // MDC 바텀 시트로 실행
-                    vc.userid = pic.ownerID
-                    vc.latS = String(pic.latitude!)
-                    vc.lngS = String(pic.longitude!)
-                    
+                    vc.userid = owner
+                    vc.latS = String(lat)
+                    vc.lngS = String(lng)
                     
                     let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
-                    
                     bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
                     // 보여주기
                     self.present(bottomSheet, animated: true, completion: nil)
-                    self.dataSource.title = pic.memo!
+                    self.dataSource.title = memo
                     self.infoWindow.dataSource = self.dataSource
-                    self.infoWindow.open(with: pic.marker!)
+                    self.infoWindow.open(with: marker1)
                 }else{
                     marker1.iconImage = NMFOverlayImage(name: "mSNormal", in: Bundle.naverMapFramework())
                     self.infoWindow.close()
@@ -118,8 +120,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         self.presentImagePicker(imagePicker, select: { (asset) in
             print("Selected: \(asset)")
             
-            print("test7870 >>\((asset.localIdentifier))")
-            
         }, deselect: { (asset) in
             print("Deselected: \(asset)")
         }, cancel: { (assets) in
@@ -129,7 +129,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                 self.dismiss(animated: true, completion: nil)
                 let pic = PicData(asset: asset)
                 pic.ownerID = UserDefaults.standard.string(forKey: "userEmail")
-                self.paramSender1?.MyPics.append(pic)
+                self.singleton.MyPics.append(pic)
                 
                 if let lat = pic.latitude, let lng = pic.longitude {
                     let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세여.", preferredStyle: .alert)
@@ -144,11 +144,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                         let title = titleAlert.textFields?[0].text
                         let friend = titleAlert.textFields?[1].text
                         pic.memo = title
-                        
                         pic.markerId = self.api.postMarker(pic)
-                        print("markerid=\(pic.markerId)")
-                        
-                        
                         print("title > \(title) 변경후 \(title as! String)")
                         //이미지post 함수 실행
                        
@@ -162,18 +158,13 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             }
         })
     }
-        
-    func mapView(_ mapView: NMFMapView, cameraDidChangeByReason reason: Int, animated: Bool) {
-        var cameraPosition:NMFCameraPosition
-        print(cameraPosition)
-        let projection = mapView.projection
-        let bound = projection.latlngBounds(fromViewBounds: mapView.frame)
-        for i in 0..<(self.paramSender1?.MyPics.count)! {
-            print("i=\(i)")
-            let lat = self.paramSender1?.MyPics[i].latitude
-            let lng = self.paramSender1?.MyPics[i].longitude
-            editMarker((self.paramSender1?.MyPics[i])!, bound.hasPoint(NMGLatLng(lat: lat!, lng: lng!)))
+    
+    func mapViewCameraIdle(_ mapView: NMFMapView) {
+        let bound = mapView.contentBounds
+        for i in 0..<self.singleton.MyPics.count {
+            if let lat = self.singleton.MyPics[i].latitude, let lng = self.singleton.MyPics[i].longitude {
+                editMarker(&self.singleton.MyPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
+            }
         }
-
     }
 }
