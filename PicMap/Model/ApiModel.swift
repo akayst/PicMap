@@ -84,13 +84,14 @@ struct ApiModel{
             print("post result")
             print(result)
             print("id = \(markerId)")
-            self.postImg(pic)
+            self.postImg(pic) //postImg 함수 부르기
         })
         return markerId
     }
     
     func postImg(_ pic:PicData) {
         let url = "http://3.35.168.181/api/v1/record/post/images"
+        let url2 : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
         
         let parameter: [String:Any] = ["userId": pic.ownerID!,
                                        "recordId": pic.markerId!]
@@ -106,7 +107,7 @@ struct ApiModel{
                     multipart.append("\(temp)".data(using: .utf8)!, withName: key)
                 }
             }
-            
+
             if let data = pic.toData() {
                 multipart.append(data, withName: "images", fileName: "\(data).jpg", mimeType: "images/jpeg")
             } else {
@@ -123,6 +124,45 @@ struct ApiModel{
             switch data.result {
             case .success(_) :
                 print("img upload success")
+                AF.request(url2,
+                           method: .get,
+                           parameters: nil,
+                            encoding: JSONEncoding.default,
+                            headers: ["Content-Type":"application/json",
+                                      "Accept":"application/json"
+                            ]
+                ).validate(statusCode: 200..<300)
+                .responseJSON(completionHandler: { (result) in
+                    if let json2 = try? JSON(data: result.data!){
+                        for(_,subJson):(String,JSON) in json2{
+                            
+                            let imgUrl = subJson["totalImageUrl"].stringValue
+                            print("이 마커의 이미지 url:\(imgUrl)")
+                            let index = imgUrl.firstIndex(of:";") ?? imgUrl.endIndex
+                            let imgData = imgUrl[..<index]
+                            var paramSender1 = UIApplication.shared.delegate as? AppDelegate
+                            paramSender1!.latP = String(imgData)
+                            
+                            print("이 마커의 이미지 추출 url: \(String(imgData))")
+                            
+                            PicData().imgPath = String(imgData)
+                        }
+                    }
+                })
+                
+                if let json = try? JSON(data: data.data!){
+                    for (key, subJson):(String, JSON) in json {
+                        //let pic = PicData().jsonParse(json: subJson)
+                        let originName = subJson["originName"].stringValue
+                        let imagesPath = subJson["imagesPath"].stringValue
+                        let userId = subJson["userId"].stringValue
+                        let recordId = subJson["recordId"].stringValue
+                        
+                        print("오리진이름:\(originName)이미지경로:\(imagesPath)유저아이디:\(userId)레코드번호:\(recordId)")
+                        
+                        
+                    }
+                }
             case .failure(let error) :
                 print(error.localizedDescription)
             }

@@ -25,6 +25,7 @@ class PicData {
     var markerId:Int?
     var marker:NMFMarker?
     
+   
     init(){
         self.asset = nil
     }
