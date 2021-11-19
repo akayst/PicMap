@@ -36,7 +36,6 @@ class bottomsheetViewController: UIViewController{
         //UIImage로 변환
         // 스택뷰 써서 넣기
         //
-        
     }
     
 }

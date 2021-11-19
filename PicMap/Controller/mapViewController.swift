@@ -31,7 +31,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(userEmail)
+        print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
             allJson = self.api.getAll()
@@ -40,7 +40,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             }
             print("PicCount=\(self.singleton.MyPics.count)")
         }
-        
         
         
         mapView.addCameraDelegate(delegate: self)
@@ -94,6 +93,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                     vc.latS = String(lat)
                     vc.lngS = String(lng)
                     
+                    
                     let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
                     bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
                     // 보여주기
@@ -127,9 +127,9 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         }, finish: { (assets) in
             for asset in assets {
                 self.dismiss(animated: true, completion: nil)
-                let pic = PicData(asset: asset)
+                var pic = PicData(asset: asset)
                 pic.ownerID = UserDefaults.standard.string(forKey: "userEmail")
-                self.singleton.MyPics.append(pic)
+                
                 
                 if let lat = pic.latitude, let lng = pic.longitude {
                     let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세여.", preferredStyle: .alert)
@@ -144,9 +144,16 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                         let title = titleAlert.textFields?[0].text
                         let friend = titleAlert.textFields?[1].text
                         pic.memo = title
-                        pic.markerId = self.api.postMarker(pic)
+                        DispatchQueue.global().async {
+                            self.api.postMarker(&pic)
+                        }
+                        //pic.markerId = self.api.postMarker(pic)
                         print("title > \(title) 변경후 \(title as! String)")
                         //이미지post 함수 실행
+                        DispatchQueue.global().async {
+                            self.api.postImg(&pic)
+                        }
+                        self.singleton.MyPics.append(pic)
                        
                     }
                     titleAlert.addAction(ok)
