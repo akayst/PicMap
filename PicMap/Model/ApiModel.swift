@@ -33,6 +33,7 @@ struct ApiModel{
         let sema = DispatchSemaphore(value:0)
         var json:JSON = JSON()
         let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
+        print(url)
         DispatchQueue.global().async {
             print("request now")
             AF.request(url,
@@ -58,7 +59,8 @@ struct ApiModel{
         return json
     }
     
-    func postMarker(_ pic:PicData) -> Int {
+    func postMarker(_ pic: inout PicData) {
+        let sema = DispatchSemaphore(value:0)
         var markerId:Int = 0
         let parameter: Parameters = [
             "userId":       pic.ownerID,
@@ -68,105 +70,89 @@ struct ApiModel{
             //"loadAddress":postData.loadAddress
         ]
         let url: String = "http://3.35.168.181/api/v1/record"
-        
-        AF.request(url,
-                   method: .post,
-                    parameters: parameter,
-                    encoding: JSONEncoding.default,
-                    headers: ["Content-Type":"application/json",
-                              "Accept":"application/json"
-                    ]
-        ).validate(statusCode: 200..<300)
-        .responseJSON(completionHandler: { (result) in
-            let json = JSON(result.data)
-            markerId = json["id"].intValue
-            pic.markerId = markerId
-            print("post result")
-            print(result)
-            print("id = \(markerId)")
-            self.postImg(pic) //postImg 함수 부르기
-        })
-        return markerId
+        DispatchQueue.global().async {
+            AF.request(url,
+                       method: .post,
+                        parameters: parameter,
+                        encoding: JSONEncoding.default,
+                        headers: ["Content-Type":"application/json",
+                                  "Accept":"application/json"
+                        ]
+            ).validate(statusCode: 200..<300)
+            .responseJSON(completionHandler: { (result) in
+                let json = JSON(result.data)
+                markerId = json["id"].intValue
+                print("post result")
+                print(result)
+                print("id = \(markerId)")
+                sema.signal()
+            })
+        }
+        sema.wait(timeout: .now() + 5)
+        pic.markerId = markerId
+        self.postImg(&pic)
     }
     
-    func postImg(_ pic:PicData) {
+    func postImg(_ pic: inout PicData) {
+        let sema = DispatchSemaphore(value: 0)
+        let data = pic.toData()
+        var imgPaths: [String] = []
         let url = "http://3.35.168.181/api/v1/record/post/images"
-        let url2 : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
-        
+    
         let parameter: [String:Any] = ["userId": pic.ownerID!,
                                        "recordId": pic.markerId!]
         print("pic.ownerID = [\(pic.ownerID)]\npic.markerId = [\(pic.markerId)]")
         
-        AF.upload(multipartFormData: { multipart in
-            //IMAGE PART
-            for (key,value) in parameter{
-                if let temp = value as? String{
-                    multipart.append(temp.data(using:.utf8)!, withName: key)
-                }
-                if let temp = value as? Int{
-                    multipart.append("\(temp)".data(using: .utf8)!, withName: key)
-                }
-            }
-
-            if let data = pic.toData() {
-                multipart.append(data, withName: "images", fileName: "\(data).jpg", mimeType: "images/jpeg")
-            } else {
-                print("failed picData to data")
-                return
-            }
-            
-        },
-        to: url,
-        headers: ["Content-Type" : "multipart/form-data"])
-        .uploadProgress(queue: .main, closure: { progress in
-            print("Upload Progress: \(progress.fractionCompleted)")
-        }).responseJSON(completionHandler: { data in
-            switch data.result {
-            case .success(_) :
-                print("img upload success")
-                AF.request(url2,
-                           method: .get,
-                           parameters: nil,
-                            encoding: JSONEncoding.default,
-                            headers: ["Content-Type":"application/json",
-                                      "Accept":"application/json"
-                            ]
-                ).validate(statusCode: 200..<300)
-                .responseJSON(completionHandler: { (result) in
-                    if let json2 = try? JSON(data: result.data!){
-                        for(_,subJson):(String,JSON) in json2{
-                            
-                            let imgUrl = subJson["totalImageUrl"].stringValue
-                            print("이 마커의 이미지 url:\(imgUrl)")
-                            let index = imgUrl.firstIndex(of:";") ?? imgUrl.endIndex
-                            let imgData = imgUrl[..<index]
-                            var paramSender1 = UIApplication.shared.delegate as? AppDelegate
-                            paramSender1!.latP = String(imgData)
-                            
-                            print("이 마커의 이미지 추출 url: \(String(imgData))")
-                            
-                            PicData().imgPath = String(imgData)
-                        }
+        DispatchQueue.global().async {
+            AF.upload(multipartFormData: { multipart in
+                //IMAGE PART
+                for (key,value) in parameter{
+                    if let temp = value as? String{
+                        multipart.append(temp.data(using:.utf8)!, withName: key)
                     }
-                })
+                    if let temp = value as? Int{
+                        multipart.append("\(temp)".data(using: .utf8)!, withName: key)
+                    }
+                }
                 
-                if let json = try? JSON(data: data.data!){
-                    for (key, subJson):(String, JSON) in json {
-                        //let pic = PicData().jsonParse(json: subJson)
-                        let originName = subJson["originName"].stringValue
-                        let imagesPath = subJson["imagesPath"].stringValue
-                        let userId = subJson["userId"].stringValue
-                        let recordId = subJson["recordId"].stringValue
-                        
-                        print("오리진이름:\(originName)이미지경로:\(imagesPath)유저아이디:\(userId)레코드번호:\(recordId)")
-                        
-                        
-                    }
+                if data != nil {
+                    multipart.append(data!, withName: "images", fileName: "\(data!).jpg", mimeType: "images/jpeg")
+                } else {
+                    print("failed picData to data")
+                    return
                 }
-            case .failure(let error) :
-                print(error.localizedDescription)
+                
+            },
+            to: url,
+            headers: ["Content-Type" : "multipart/form-data"])
+            .uploadProgress(queue: .main, closure: { progress in
+                print("Upload Progress: \(progress.fractionCompleted)")
+            }).responseJSON(completionHandler: { (data) in
+                switch data.result {
+                case .success(let value) :
+                    // pic update
+                    let json = JSON(value)
+                    print("img upload success")
+                    for (_, subJson) : (String, JSON) in json {
+                        imgPaths.append(subJson["imageUrl"].stringValue)
+                    }
+                    print("updated imgpath=\(imgPaths)")
+                case .failure(let error) :
+                    print(error.localizedDescription)
+                }
+                sema.signal()
+            })
+        }
+        sema.wait(timeout: .now() + 5)
+        print("before pic.imgPath=\(pic.imgPath)")
+        for path in imgPaths {
+            if path.isEmpty {
+                continue
             }
-        })
+            pic.imgPath.append(path)
+            
+        }
+        print("after pic.imgPath=\(pic.imgPath)")
     }
 }
 

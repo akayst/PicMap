@@ -16,7 +16,7 @@ import NMapsMap
 class PicData {
     var asset:PHAsset?
     var ownerID:String?
-    var imgPath:String?
+    var imgPath:[String] = []
     var localID:String?
     var latitude:Double?
     var longitude:Double?
@@ -96,6 +96,10 @@ class PicData {
         self.latitude = json["latitude"].doubleValue
         self.longitude = json["longitude"].doubleValue
         self.memo = json["memo"].stringValue
+        if let imgPaths = json["totalImageUrl"].string {
+            self.imgPath = imgPaths.components(separatedBy: ";;")
+        }
+        
     }
     
     
@@ -147,6 +151,12 @@ class PicData {
             return image.jpegData(compressionQuality: 0.8)!
         }
         return nil
+    }
+    
+    func updateImgFromJSON(json:JSON) {
+        if let imgPaths = json["imageUrl"].string {
+            self.imgPath = imgPaths.components(separatedBy: ";;")
+        }
     }
     
     /*

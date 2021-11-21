@@ -8,6 +8,7 @@
 class MySingleton {
     static let shared = MySingleton()
     var MyPics:[PicData] = []
+    var imgPics:[String] = []
     private init(){
         
     }

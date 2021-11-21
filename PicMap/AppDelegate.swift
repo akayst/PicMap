@@ -13,7 +13,7 @@ import FirebaseFirestore
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-    var latP:String!
+    var imgP:String!
     var lonP:Double!
     var userP:String!
     var memoP:AFDataResponse<Any>!
