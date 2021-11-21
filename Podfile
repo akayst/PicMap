@@ -14,6 +14,8 @@ target 'PicMap' do
   pod'BSImagePicker'
   pod'lottie-ios'
   pod'Firebase/Storage'
+  pod'Floaty'
+  pod'Kingfisher'
 
   post_install do |pi|
      pi.pods_project.targets.each do |t|

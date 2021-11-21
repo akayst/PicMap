@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="18122" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QpO-qt-xHW">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19455" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="QpO-qt-xHW">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="18093"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19454"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="collection view cell content view" minToolsVersion="11.0"/>
@@ -34,8 +35,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Jmk-x6-QBJ" customClass="AnimationView" customModule="Lottie">
-                                <rect key="frame" x="5" y="118" width="404" height="456"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Jmk-x6-QBJ" customClass="AnimationView" customModule="Lottie">
+                                <rect key="frame" x="5" y="93" width="404" height="0.0"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="string" keyPath="animationName" value="78072-map-pin-location"/>
@@ -212,24 +213,18 @@
             </objects>
             <point key="canvasLocation" x="879.71014492753625" y="32.8125"/>
         </scene>
-        <!--mapViewController-->
+        <!--Item 1-->
         <scene sceneID="Bex-ND-ID0">
             <objects>
-                <viewController title="mapViewController" id="AWf-KR-q2p" customClass="mapViewController" customModule="PicMap" sceneMemberID="viewController">
+                <viewController id="AWf-KR-q2p" customClass="mapViewController" customModule="PicMap" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="Wat-a5-X3b">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D1U-1d-OEv" customClass="NMFMapView">
-                                <rect key="frame" x="5" y="98" width="404" height="689"/>
+                                <rect key="frame" x="5" y="0.0" width="404" height="896"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
-                            <textField opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="AS8-UQ-mtv">
-                                <rect key="frame" x="185" y="795" width="97" height="34"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits"/>
-                            </textField>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nxo-PN-Vz8"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -257,7 +252,6 @@
                     </navigationItem>
                     <connections>
                         <outlet property="mapView" destination="D1U-1d-OEv" id="TB9-rd-iNB"/>
-                        <outlet property="searchBar" destination="AS8-UQ-mtv" id="Fbq-aA-Lv4"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Hzm-6W-GNn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -340,6 +334,9 @@
             <point key="canvasLocation" x="1908.6956521739132" y="386.38392857142856"/>
         </scene>
     </scenes>
+    <designables>
+        <designable name="Jmk-x6-QBJ"/>
+    </designables>
     <inferredMetricsTieBreakers>
         <segue reference="DeI-tA-3rU"/>
     </inferredMetricsTieBreakers>
