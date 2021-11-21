@@ -29,13 +29,10 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     let userEmail = UserDefaults.standard.string(forKey: "userEmail")
     var api: ApiModel = ApiModel()
     let floaty = Floaty()
-    
-    @IBOutlet weak var searchBar: UITextField!
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.navigationController?.isNavigationBarHidden = true
-        self.navigationItem.hidesBackButton = true
-        self.navigationItem.title = nil
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
         self.view.addSubview(self.floaty)
         print(userEmail!)
         var allJson:JSON = JSON()
@@ -46,14 +43,11 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             }
             print("PicCount=\(self.singleton.MyPics.count)")
         }
-        
-        
         mapView.addCameraDelegate(delegate: self)
         mapView.mapType = .navi
         mapView.isIndoorMapEnabled = true
         mapView.isNightModeEnabled = false
         //editMarker(37.22, 126.77,"test")
-        
         
         func mapView1(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
             infoWindow.close()

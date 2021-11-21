@@ -221,35 +221,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="D1U-1d-OEv" customClass="NMFMapView">
-                                <rect key="frame" x="5" y="0.0" width="404" height="896"/>
+                            <view contentMode="scaleToFill" fixedFrame="YES" insetsLayoutMarginsFromSafeArea="NO" translatesAutoresizingMaskIntoConstraints="NO" id="D1U-1d-OEv" customClass="NMFMapView">
+                                <rect key="frame" x="0.0" y="1" width="414" height="896"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                             </view>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="nxo-PN-Vz8"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                        <constraints>
-                            <constraint firstItem="D1U-1d-OEv" firstAttribute="top" secondItem="nxo-PN-Vz8" secondAttribute="top" id="PQK-c0-RUD"/>
-                            <constraint firstItem="D1U-1d-OEv" firstAttribute="leading" secondItem="nxo-PN-Vz8" secondAttribute="leading" id="WYc-du-7dt"/>
-                            <constraint firstItem="nxo-PN-Vz8" firstAttribute="trailing" secondItem="D1U-1d-OEv" secondAttribute="trailing" id="vdJ-QC-XLj"/>
-                            <constraint firstItem="D1U-1d-OEv" firstAttribute="bottom" secondItem="nxo-PN-Vz8" secondAttribute="bottom" id="vgC-BC-Fyn"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="Item 1" id="O2g-d6-ZAA"/>
-                    <navigationItem key="navigationItem" id="bFn-hN-Bdv">
-                        <rightBarButtonItems>
-                            <barButtonItem title="Item" image="plus" catalog="system" id="vDd-e6-G5E">
-                                <connections>
-                                    <action selector="showImagePicker:" destination="AWf-KR-q2p" id="NUx-Gq-dyb"/>
-                                </connections>
-                            </barButtonItem>
-                            <barButtonItem title="Item" id="S1m-6H-GYN">
-                                <connections>
-                                    <action selector="onSearchbtn:" destination="AWf-KR-q2p" id="hFo-aU-t12"/>
-                                </connections>
-                            </barButtonItem>
-                        </rightBarButtonItems>
-                    </navigationItem>
+                    <nil key="simulatedTopBarMetrics"/>
                     <connections>
                         <outlet property="mapView" destination="D1U-1d-OEv" id="TB9-rd-iNB"/>
                     </connections>
@@ -338,10 +320,9 @@
         <designable name="Jmk-x6-QBJ"/>
     </designables>
     <inferredMetricsTieBreakers>
-        <segue reference="DeI-tA-3rU"/>
+        <segue reference="6HH-TH-M4x"/>
     </inferredMetricsTieBreakers>
     <resources>
-        <image name="plus" catalog="system" width="128" height="113"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

@@ -40,7 +40,7 @@ class logoViewController: UIViewController{
         test123.play()
     }
     override func viewWillDisappear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(false, animated: true)
+        
     }
 }
     
