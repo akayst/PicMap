@@ -15,6 +15,7 @@ import SwiftyJSON
 import Photos
 import BSImagePicker
 import FirebaseStorage
+import Floaty
 
 
 class mapViewController: UIViewController, NMFMapViewCameraDelegate {
@@ -27,10 +28,15 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     let dataSource = NMFInfoWindowDefaultTextSource.data()
     let userEmail = UserDefaults.standard.string(forKey: "userEmail")
     var api: ApiModel = ApiModel()
+    let floaty = Floaty()
     
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.isNavigationBarHidden = true
+        self.navigationItem.hidesBackButton = true
+        self.navigationItem.title = nil
+        self.view.addSubview(self.floaty)
         print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
@@ -48,10 +54,96 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         mapView.isNightModeEnabled = false
         //editMarker(37.22, 126.77,"test")
         
+        
         func mapView1(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
             infoWindow.close()
-            
         } //지도 탭 했을때 정보창 닫히게 하는 함수
+        
+        let uploadItem = FloatyItem()
+        uploadItem.icon = UIImage(systemName: "arrow.up")
+        uploadItem.handler = { item in
+            let allAssets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
+            var evenAssets = [PHAsset]()
+            let imagePicker = ImagePickerController(selectedAssets: evenAssets)
+            imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
+            imagePicker.settings.selection.max = 5 // 이미지 피커의 선택 갯수제한 5장
+            self.presentImagePicker(imagePicker, select: { (asset) in
+                print("Selected: \(asset)")
+                
+            }, deselect: { (asset) in
+                print("Deselected: \(asset)")
+            }, cancel: { (assets) in
+                print("Canceled with sefgvlections: \(assets)")
+            }, finish: { (assets) in
+                for asset in assets {
+                    self.dismiss(animated: true, completion: nil)
+                    var pic = PicData(asset: asset)
+                    pic.ownerID = UserDefaults.standard.string(forKey: "userEmail")
+                    if let lat = pic.latitude, let lng = pic.longitude {
+                        let sema = DispatchSemaphore(value: 0)
+                        var mkid = 0
+                        DispatchQueue.global().async {
+                            pic.address = self.api.getAddr(lng: lng, lat: lat)
+                            print("pic.address=\(pic.address!)")
+                            for myPic in self.singleton.MyPics {
+                                if myPic.address! == pic.address! {
+                                    print("mkid=\(myPic.markerId!)")
+                                    mkid = myPic.markerId!
+                                    pic.markerId = mkid
+                                    break
+                                }
+                            }
+                            sema.signal()
+                        }
+                        let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세여.", preferredStyle: .alert)
+                        titleAlert.addTextField { UITextField in
+                            UITextField.placeholder = "메모설정"
+                        }
+                        titleAlert.addTextField { UITextField in
+                            UITextField.placeholder = "보여질 친구의 이메일"
+                        }
+                        let ok = UIAlertAction(title: "업로드", style: .default) { UIAlertAction in
+                            let title = titleAlert.textFields?[0].text
+                            let friend = titleAlert.textFields?[1].text
+                            pic.memo = title
+                            DispatchQueue.global().async {
+                                self.api.postMarker(&pic)
+                                self.singleton.MyPics.append(pic)
+                            }
+                        }
+                        titleAlert.addAction(ok)
+                        DispatchQueue.global().async {
+                            sema.wait(timeout: .now() + 5)
+                            if mkid == 0 {      // 새로 마커 찍을때만 메모 입력
+                                self.present(titleAlert, animated: true, completion: nil)
+                            } else {
+                                self.api.postImg(&pic)
+                                for i in 0..<self.singleton.MyPics.count {
+                                    if self.singleton.MyPics[i].markerId != mkid {
+                                        continue
+                                    }
+                                    self.singleton.MyPics[i].imgPath.append(pic.imgPath[0])
+                                    break
+                                }
+                                
+                            }
+                        }
+                        self.dismiss(animated: true, completion: nil)
+                    } else {
+                        print("위경도 값이 없습니다")
+                    }
+                }
+            })
+        }
+        self.floaty.addItem(item: uploadItem)
+        let accountItem = FloatyItem()
+        accountItem.icon = UIImage(systemName: "person.fill")
+        accountItem.handler = { item in
+            // account handler
+            
+        }
+        self.floaty.addItem(item: accountItem)
+        
     }
     
     func cameraPosition(_ latitude:Double,_ longitude:Double){
@@ -93,7 +185,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                     vc.latS = String(lat)
                     vc.lngS = String(lng)
                     
-                    
                     let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
                     bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
                     // 보여주기
@@ -132,6 +223,18 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                 
                 
                 if let lat = pic.latitude, let lng = pic.longitude {
+                    var mkid = 0
+                    DispatchQueue.global().async {
+                        pic.address = self.api.getAddr(lng: lng, lat: lat)
+                        for myPic in self.singleton.MyPics {
+                            if myPic.address == pic.address {
+                                mkid = myPic.markerId!
+                                pic.markerId = mkid
+                                break
+                            }
+                        }
+                    }
+                    
                     let titleAlert = UIAlertController(title: "부가설정", message: "메모와 친구를 입력하세여.", preferredStyle: .alert)
                     titleAlert.addTextField { UITextField in
                         UITextField.placeholder = "메모설정"
@@ -145,14 +248,15 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                         let friend = titleAlert.textFields?[1].text
                         pic.memo = title
                         DispatchQueue.global().async {
-                            self.api.postMarker(&pic)
+                            if mkid == 0 {
+                                self.api.postMarker(&pic)
+                            } else {
+                                self.api.postImg(&pic)
+                            }
                         }
                         //pic.markerId = self.api.postMarker(pic)
                         print("title > \(title) 변경후 \(title as! String)")
                         //이미지post 함수 실행
-                        DispatchQueue.global().async {
-                            self.api.postImg(&pic)
-                        }
                         self.singleton.MyPics.append(pic)
                        
                     }

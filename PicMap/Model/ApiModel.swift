@@ -67,7 +67,7 @@ struct ApiModel{
             "longitude":    pic.longitude!, // 로컬 이미지 선택후  메모 알람창이 뜨기직전에 저장됨
             "latitude":     pic.latitude!, // 로컬 이미지 선택 후 메모 알람창이 뜨기직전에 저장됨
             "memo":         pic.memo, // 메모알람창이 뜬 후 버튼클릭시에 저장됨
-            //"loadAddress":postData.loadAddress
+            "loadAddress":  pic.address!
         ]
         let url: String = "http://3.35.168.181/api/v1/record"
         DispatchQueue.global().async {
@@ -90,12 +90,13 @@ struct ApiModel{
         }
         sema.wait(timeout: .now() + 5)
         pic.markerId = markerId
+        self.postImg(&pic)
     }
     
     func postImg(_ pic: inout PicData) {
         let sema = DispatchSemaphore(value: 0)
         let data = pic.toData()
-        var imgPaths: [String] = []
+        var resultPath = ""
         let url = "http://3.35.168.181/api/v1/record/post/images"
         let parameter: [String:Any] = ["userId": pic.ownerID!,
                                        "recordId": pic.markerId!]
@@ -119,7 +120,6 @@ struct ApiModel{
                     print("failed picData to data")
                     return
                 }
-                
             },
             to: url,
             headers: ["Content-Type" : "multipart/form-data"])
@@ -132,9 +132,9 @@ struct ApiModel{
                     let json = JSON(value)
                     print("img upload success")
                     for (_, subJson) : (String, JSON) in json {
-                        imgPaths.append(subJson["imageUrl"].stringValue)
+                        resultPath = subJson["imageUrl"].stringValue
                     }
-                    print("updated imgpath=\(imgPaths)")
+                    print("updated imgpath=\(resultPath)")
                 case .failure(let error) :
                     print(error.localizedDescription)
                 }
@@ -143,13 +143,46 @@ struct ApiModel{
         }
         sema.wait(timeout: .now() + 5)
         print("before pic.imgPath=\(pic.imgPath)")
-        for path in imgPaths {
-            if path.isEmpty {
-                continue
-            }
-            pic.imgPath.append(path)
-        }
+        pic.imgPath.append(resultPath)
         print("after pic.imgPath=\(pic.imgPath)")
+    }
+    
+    func getAddr(lng: Double, lat: Double) -> String {
+        let sema = DispatchSemaphore(value: 0)
+        var addr = String()
+        let url = "https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=" + String(lng) + "," + String(lat) + "&orders=addr&output=json"
+        let header = HTTPHeaders(["X-NCP-APIGW-API-KEY-ID": "77l5jo9x2b", "X-NCP-APIGW-API-KEY": "lvZ2SejTt6MgwOtXjuNyRifmdmpl1DcLp1scu9KT"])
+        DispatchQueue.global().async {
+            AF.request(url,
+                       method: .get,
+                       parameters: nil,
+                       encoding: JSONEncoding.default,
+                       headers: header)
+                .validate(statusCode: 200..<300)
+                .responseJSON { (response) in
+                    print("get addr")
+                    var json = JSON(response.data!)
+                    json = json["results"][0]
+                    let region = json["region"]
+                    for i in 1...4 {
+                        let name = region["area"+String(i)]["name"].stringValue
+                        if name.isEmpty {
+                            continue
+                        }
+                        addr += name
+                        addr += " "
+                    }
+                    let detail = json["land"]["number1"].stringValue
+                    addr += detail
+                    let addition = json["land"]["number2"].stringValue
+                    if !addition.isEmpty {
+                        addr += "-" + addition
+                    }
+                    sema.signal()
+                }
+        }
+        sema.wait(timeout: .now() + 5)
+        return addr
     }
 }
 

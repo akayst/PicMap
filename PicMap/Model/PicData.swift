@@ -20,6 +20,7 @@ class PicData {
     var localID:String?
     var latitude:Double?
     var longitude:Double?
+    var address:String?
     var date:Date?
     var memo:String?
     var markerId:Int?
@@ -95,6 +96,7 @@ class PicData {
         self.latitude = json["latitude"].doubleValue
         self.longitude = json["longitude"].doubleValue
         self.memo = json["memo"].stringValue
+        self.address = json["loadAddress"].stringValue
         if let imgPaths = json["totalImageUrl"].string {
             self.imgPath = imgPaths.components(separatedBy: ";;")
         }
