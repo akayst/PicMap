@@ -24,6 +24,20 @@ class registerViewController: UIViewController{
     override func viewDidLoad() {
         registerBtn.layer.cornerRadius = 10
         registerBtn.clipsToBounds = true
+        emailTextfield.borderStyle = .none
+        passwordTextfield.borderStyle = .none
+        let border = CALayer()
+        let border2 = CALayer()
+        border.frame = CGRect(x: 0, y: emailTextfield.frame.size.height-1, width: emailTextfield.frame.width, height: 1)
+        border.backgroundColor = UIColor.black.cgColor
+        border2.frame = CGRect(x: 0, y: passwordTextfield.frame.size.height-1, width: passwordTextfield.frame.width, height: 1)
+        border2.backgroundColor = UIColor.black.cgColor
+        emailTextfield.backgroundColor = .white
+        passwordTextfield.backgroundColor = .white
+        emailTextfield.layer.addSublayer(border)
+        emailTextfield.textAlignment = .center
+        passwordTextfield.layer.addSublayer(border2)
+        passwordTextfield.textAlignment = .center
     }
 
     @IBAction func registerPressed(_ sender: Any) {
@@ -34,7 +48,7 @@ class registerViewController: UIViewController{
                     //self.navigationController?.popViewController(animated: false) 회원가입버튼누르면 걍 들어가져서 강제로 팝 뷰함2021.10.30버튼에서 뷰컨으로 세그를 건드는게 아니라 뷰컨에서 뷰컨으로 세그를 만들어야했었음 ;; 
                     
                 }else{
-                    UserDefaults.standard.set(email, forKey: "userEmail")
+                    
                     self.performSegue(withIdentifier: "registerToMap", sender: self)
                 }
                 

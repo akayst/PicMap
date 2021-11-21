@@ -9,21 +9,57 @@ import UIKit
 import Firebase
 import Alamofire
 import FirebaseFirestore
-
+import GoogleSignIn
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+    public static var user: GIDGoogleUser!
+    func sign(_ signIn:GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!){
+        //print("User email: \(user.profile?.email ?? "No email")")
+        if let error = error {
+            print(error)
+            return
+            }
+        guard let authentication = user.authentication else { return }
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+                                                       accessToken: authentication.accessToken)
+        Auth.auth().signIn(with: credential) { (authResult, error) in
+            if let error = error {
+                print(error.localizedDescription)
+            }
+            else {
+                print("Login Successful")
+                AppDelegate.user = user
+                
+              
+            }
+            
+        }
+
+    }
+    
+    
+    
     
     var imgP:String!
     var lonP:Double!
     var userP:String!
     var memoP:AFDataResponse<Any>!
+   
     
+    @available(iOS 9.0,*)
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+    
+
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
         FirebaseApp.configure()
         
-        let db = Firestore.firestore()
         
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
+        let db = Firestore.firestore()
         
         return true
     }

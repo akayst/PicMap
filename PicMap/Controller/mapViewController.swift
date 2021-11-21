@@ -25,13 +25,14 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     let db = Firestore.firestore()
     let infoWindow = NMFInfoWindow()
     let dataSource = NMFInfoWindowDefaultTextSource.data()
-    let userEmail = UserDefaults.standard.string(forKey: "userEmail")
+    //let userEmail = UserDefaults.standard.string(forKey: "userEmail")
     var api: ApiModel = ApiModel()
     
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
-        print(userEmail!)
+        navigationController?.setNavigationBarHidden(false, animated: true)
+        //print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
             allJson = self.api.getAll()
