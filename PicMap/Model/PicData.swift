@@ -26,6 +26,7 @@ class PicData {
     var markerId:Int?
     var marker:NMFMarker?
     
+   
     init(){
         self.asset = nil
     }
@@ -96,7 +97,10 @@ class PicData {
         self.latitude = json["latitude"].doubleValue
         self.longitude = json["longitude"].doubleValue
         self.memo = json["memo"].stringValue
+<<<<<<< HEAD
         self.address = json["loadAddress"].stringValue
+=======
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
         if let imgPaths = json["totalImageUrl"].string {
             self.imgPath = imgPaths.components(separatedBy: ";;")
         }

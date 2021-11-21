@@ -33,10 +33,13 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
     @IBOutlet weak var searchBar: UITextField!
     override func viewDidLoad() {
         super.viewDidLoad()
+<<<<<<< HEAD
         self.navigationController?.isNavigationBarHidden = true
         self.navigationItem.hidesBackButton = true
         self.navigationItem.title = nil
         self.view.addSubview(self.floaty)
+=======
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
         print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
@@ -169,6 +172,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         let lng = pic.longitude!
         let owner = pic.ownerID
         let memo = pic.memo!
+        let imgPath = pic.imgPath
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = NMF_MARKER_IMAGE_RED
         pic.marker!.mapView = mapView
@@ -182,13 +186,15 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                     let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
                     // MDC 바텀 시트로 실행
                     vc.userid = owner
-                    vc.latS = String(lat)
-                    vc.lngS = String(lng)
+                    vc.latS = imgPath[0]
+                    
                     
                     let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
-                    bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
+                    bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3) //시스템배경색 그레이로 11.21
+                    bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300 // 바텀시트길이
                     // 보여주기
                     self.present(bottomSheet, animated: true, completion: nil)
+                    
                     self.dataSource.title = memo
                     self.infoWindow.dataSource = self.dataSource
                     self.infoWindow.open(with: marker1)
@@ -208,19 +214,33 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         let imagePicker = ImagePickerController(selectedAssets: evenAssets)
         imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
         imagePicker.settings.selection.max = 5 // 이미지 피커의 선택 갯수제한 5장
+        imagePicker.settings.selection.min = 1
+        imagePicker.settings.theme.selectionFillColor = .red
+        
         self.presentImagePicker(imagePicker, select: { (asset) in
-            print("Selected: \(asset)")
             
+            print("Selected: \(asset)")
         }, deselect: { (asset) in
             print("Deselected: \(asset)")
         }, cancel: { (assets) in
             print("Canceled with sefgvlections: \(assets)")
         }, finish: { (assets) in
+            
             for asset in assets {
                 self.dismiss(animated: true, completion: nil)
+<<<<<<< HEAD
                 var pic = PicData(asset: asset)
                 pic.ownerID = UserDefaults.standard.string(forKey: "userEmail")
                 
+=======
+                
+                //var pic = PicData(assets)
+                var pic = PicData(asset: asset)
+                
+                pic.ownerID = UserDefaults.standard.string(forKey: "userEmail")
+                
+            
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
                 
                 if let lat = pic.latitude, let lng = pic.longitude {
                     var mkid = 0
@@ -248,11 +268,15 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                         let friend = titleAlert.textFields?[1].text
                         pic.memo = title
                         DispatchQueue.global().async {
+<<<<<<< HEAD
                             if mkid == 0 {
                                 self.api.postMarker(&pic)
                             } else {
                                 self.api.postImg(&pic)
                             }
+=======
+                            self.api.postMarker(&pic)
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
                         }
                         //pic.markerId = self.api.postMarker(pic)
                         print("title > \(title) 변경후 \(title as! String)")

@@ -96,8 +96,14 @@ struct ApiModel{
     func postImg(_ pic: inout PicData) {
         let sema = DispatchSemaphore(value: 0)
         let data = pic.toData()
+<<<<<<< HEAD
         var resultPath = ""
         let url = "http://3.35.168.181/api/v1/record/post/images"
+=======
+        var imgPaths: [String] = []
+        let url = "http://3.35.168.181/api/v1/record/post/images"
+    
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
         let parameter: [String:Any] = ["userId": pic.ownerID!,
                                        "recordId": pic.markerId!]
         print("pic.ownerID = [\(pic.ownerID)]\npic.markerId = [\(pic.markerId)]")
@@ -120,6 +126,10 @@ struct ApiModel{
                     print("failed picData to data")
                     return
                 }
+<<<<<<< HEAD
+=======
+                
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
             },
             to: url,
             headers: ["Content-Type" : "multipart/form-data"])
@@ -132,9 +142,15 @@ struct ApiModel{
                     let json = JSON(value)
                     print("img upload success")
                     for (_, subJson) : (String, JSON) in json {
+<<<<<<< HEAD
                         resultPath = subJson["imageUrl"].stringValue
                     }
                     print("updated imgpath=\(resultPath)")
+=======
+                        imgPaths.append(subJson["imageUrl"].stringValue)
+                    }
+                    print("updated imgpath=\(imgPaths)")
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
                 case .failure(let error) :
                     print(error.localizedDescription)
                 }
@@ -143,6 +159,7 @@ struct ApiModel{
         }
         sema.wait(timeout: .now() + 5)
         print("before pic.imgPath=\(pic.imgPath)")
+<<<<<<< HEAD
         pic.imgPath.append(resultPath)
         print("after pic.imgPath=\(pic.imgPath)")
     }
@@ -183,6 +200,16 @@ struct ApiModel{
         }
         sema.wait(timeout: .now() + 5)
         return addr
+=======
+        for path in imgPaths {
+            if path.isEmpty {
+                continue
+            }
+            pic.imgPath.append(path)
+            
+        }
+        print("after pic.imgPath=\(pic.imgPath)")
+>>>>>>> a6138c9d39e450fc3c2f356a8fec97737d68973c
     }
 }
 

@@ -21,6 +21,7 @@ class loginViewController: UIViewController{
     override func viewDidLoad() {
         loginBtn.layer.cornerRadius = 10
         loginBtn.clipsToBounds = true
+        self.navigationItem.title = ""
     }
     @IBAction func loginPressed(_ sender: UIButton) {
         
