@@ -24,8 +24,11 @@ class bottomsheetViewController: UIViewController{
     var memo:String?
     var markerId:Int?
     var isHide:Bool?
+    var address:String?
     @IBOutlet weak var delBtn: UIButton!
     @IBOutlet weak var memoLabel: UILabel!
+    
+    @IBOutlet var addressLabel: UILabel!
     
     @IBAction func onDel(_ sender: UIButton) {
         let alert = UIAlertController(title: "마커 삭제", message: "정말로 삭제하시겠습니까?", preferredStyle: .alert)
@@ -55,6 +58,7 @@ class bottomsheetViewController: UIViewController{
         self.memoLabel.text = "\(self.memo!)"
         self.delBtn.setTitle("", for: .normal)
         self.delBtn.isHidden = self.isHide!
+        self.addressLabel.text = self.address
     }
 }
 

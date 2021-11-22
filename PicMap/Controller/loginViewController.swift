@@ -59,8 +59,6 @@ class loginViewController: UIViewController{
             Auth.auth().signIn(withEmail: email, password: password) {[weak self] authResult, error in
                 if let e = error{
                     print(e)
-                    //self?.navigationController?.popViewController(animated: false) //로그인버튼누르면 걍 들어가져서 강제로 팝 뷰함 ->>2021.10.30버튼에서 뷰컨으로 세그를 건드는게 아니라 뷰컨에서 뷰컨으로 세그를 만들어야했었음 ;; 
-                    
                 }else{
                     UserDefaults.standard.set(email, forKey: "userEmail")
                     self!.performSegue(withIdentifier: "loginToMap", sender: self)

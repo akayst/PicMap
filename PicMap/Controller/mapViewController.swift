@@ -218,6 +218,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
         let owner = pic.ownerID
         let memo = pic.memo!
         let imgPath = pic.imgPath
+        let address = pic.address!
         let isMine = owner == UserDefaults.standard.string(forKey: "userEmail") ? true : false
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = isMine ? NMF_MARKER_IMAGE_GREEN : NMF_MARKER_IMAGE_LIGHTBLUE
@@ -233,7 +234,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
                 vc.memo = memo
                 vc.markerId = mkid
                 vc.isHide = !isMine
-                
+                vc.address = address
                 let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
                 bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3) //시스템배경색 그레이로 11.21
                 bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300 // 바텀시트길이

@@ -24,7 +24,7 @@
 		4DF78445272D3748001DD1DE /* logoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78444272D3748001DD1DE /* logoViewController.swift */; };
 		4DF78447272D37C0001DD1DE /* loginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78446272D37C0001DD1DE /* loginViewController.swift */; };
 		4DF78449272D394E001DD1DE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DF78448272D394E001DD1DE /* GoogleService-Info.plist */; };
-		4DF78453272D4F2A001DD1DE /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4DF78453272D4F2A001DD1DE /* BuildFile in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D300E68C02E532312BB4D55A /* Pods_PicMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF156055B54945C00BA48766 /* Pods_PicMap.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +35,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4DF78453272D4F2A001DD1DE /* (null) in Embed Frameworks */,
+				4DF78453272D4F2A001DD1DE /* BuildFile in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -176,6 +176,7 @@
 				4DF78426272D35F8001DD1DE /* Resources */,
 				4DF78454272D4F2A001DD1DE /* Embed Frameworks */,
 				AE866C2726345CF4C19BDFBB /* [CP] Embed Pods Frameworks */,
+				3F27623E875815A47A5275B3 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -236,6 +237,23 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		3F27623E875815A47A5275B3 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PicMap/Pods-PicMap-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-PicMap/Pods-PicMap-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-PicMap/Pods-PicMap-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		AE866C2726345CF4C19BDFBB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;

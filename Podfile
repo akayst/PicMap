@@ -15,7 +15,7 @@ target 'PicMap' do
   pod'Floaty'
   pod'Kingfisher'
   pod'GoogleSignIn','~>5.0'
-  
+  pod'IQKeyboardManagerSwift'
   post_install do |pi|
      pi.pods_project.targets.each do |t|
          t.build_configurations.each do |bc|

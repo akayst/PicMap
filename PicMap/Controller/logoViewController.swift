@@ -23,7 +23,7 @@ class logoViewController: UIViewController{
    
         
         test123.contentMode = .scaleAspectFit
-        //test123.loopMode = .loop
+        test123.loopMode = .loop
         test123.play()
         loginBtn.layer.cornerRadius = 10
         loginBtn.clipsToBounds = true
