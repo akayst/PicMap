@@ -8,7 +8,6 @@
 import UIKit
 import Firebase
 import Alamofire
-import FirebaseFirestore
 import GoogleSignIn
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
@@ -36,15 +35,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         }
 
     }
-    
-    
-    
-    
-    var imgP:String!
-    var lonP:Double!
-    var userP:String!
-    var memoP:AFDataResponse<Any>!
-   
+
     
     @available(iOS 9.0,*)
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
@@ -59,7 +50,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
         
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         GIDSignIn.sharedInstance().delegate = self
-        let db = Firestore.firestore()
         
         return true
     }
