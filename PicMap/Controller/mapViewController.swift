@@ -27,16 +27,12 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
     let infoWindow = NMFInfoWindow()
     let dataSource = NMFInfoWindowDefaultTextSource.data()
     //let userEmail = UserDefaults.standard.string(forKey: "userEmail")
-<<<<<<< HEAD
     @IBOutlet var locationBtn: UIButton!
     
     func gpsBtn() {
         locationBtn.setTitle("", for: UIControl.State.selected)
         locationBtn.addTarget(self, action: #selector(locationTapped), for: .touchUpInside)
     }
-=======
-    var api: ApiModel = ApiModel()
->>>>>>> 8077722f91575fa8f8969b220c19b2cd56b74a9a
     
     @objc func locationTapped(_ sender:UIButton){
         if sender.isSelected == true{
@@ -52,7 +48,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
     }
     override func viewDidLoad() {
         super.viewDidLoad()
-<<<<<<< HEAD
         
         mapView.positionMode = .direction
         mapView.positionMode = .compass
@@ -73,9 +68,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
         
         
         self.view.addSubview(self.floaty)
-=======
-        navigationController?.setNavigationBarHidden(false, animated: true)
->>>>>>> 8077722f91575fa8f8969b220c19b2cd56b74a9a
         //print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
@@ -235,6 +227,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
             if let marker1 = overlay as? NMFMarker{
                 self.cameraPosition(lat, lng)
                 let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
+                
                 // MDC 바텀 시트로 실행
                 vc.paths = imgPath
                 vc.memo = memo
