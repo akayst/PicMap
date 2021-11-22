@@ -21,17 +21,18 @@ class loginViewController: UIViewController{
     
     @IBOutlet var registerBtn: UIButton!
 
-    
-    @IBOutlet var googleLoginBtn: UIView!
- 
     @IBAction func googlebb(_ sender: Any) {
         let user = AppDelegate.user
-        GIDSignIn.sharedInstance().signIn()
         emailTextfield.text = user?.profile.email
     }
+    
+    @IBOutlet weak var GsiBtn: GIDSignInButton!
+    
     override func viewDidLoad() {
+        super.viewDidLoad()
         GIDSignIn.sharedInstance()?.presentingViewController = self
         GIDSignIn.sharedInstance().signIn()
+        GsiBtn.style = .standard
         navigationController?.setNavigationBarHidden(true, animated: false)
         //if let _ = UserDefaults.standard.string(forKey: "userEmail") {
        //     performSegue(withIdentifier: "preLoginToMap", sender: self)

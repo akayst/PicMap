@@ -188,9 +188,8 @@
                             </button>
                             <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="K6M-Ok-6wk" customClass="GIDSignInButton">
                                 <rect key="frame" x="87" y="585" width="240" height="207"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <connections>
-                                    <action selector="googlebb:" destination="6LD-sX-qxl" eventType="touchDown" id="XCw-Wq-AD8"/>
+                                    <action selector="googlebb:" destination="6LD-sX-qxl" eventType="touchDown" id="WJS-pg-n4y"/>
                                 </connections>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LA7-eJ-giq">
@@ -226,8 +225,8 @@
                     </view>
                     <navigationItem key="navigationItem" id="tzR-QC-k8g"/>
                     <connections>
+                        <outlet property="GsiBtn" destination="K6M-Ok-6wk" id="kup-m1-4U4"/>
                         <outlet property="emailTextfield" destination="3Iy-nI-bF3" id="vp4-1H-Sf9"/>
-                        <outlet property="googleLoginBtn" destination="K6M-Ok-6wk" id="hk4-LX-7fO"/>
                         <outlet property="loginBtn" destination="6rj-BY-2WF" id="Z2k-JJ-K31"/>
                         <outlet property="passwordTextfield" destination="wSN-vi-S7o" id="jBb-93-ie6"/>
                         <outlet property="registerBtn" destination="LA7-eJ-giq" id="1tx-AE-RII"/>
@@ -381,6 +380,9 @@
             <point key="canvasLocation" x="1908.6956521739132" y="386.38392857142856"/>
         </scene>
     </scenes>
+    <designables>
+        <designable name="Jmk-x6-QBJ"/>
+    </designables>
     <inferredMetricsTieBreakers>
         <segue reference="uMW-Z0-Gg3"/>
     </inferredMetricsTieBreakers>
