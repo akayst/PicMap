@@ -6,17 +6,16 @@ target 'PicMap' do
 
   # Pods for PicMap
   pod'Firebase/Auth'
-  pod'Firebase/Firestore'
   pod'NMapsMap'
   pod'MaterialComponents/BottomSheet'
   pod'Alamofire'
   pod'SwiftyJSON'
   pod'BSImagePicker'
   pod'lottie-ios'
-  pod'Firebase/Storage'
   pod'Floaty'
   pod'Kingfisher'
-
+  pod'GoogleSignIn','~>5.0'
+  
   post_install do |pi|
      pi.pods_project.targets.each do |t|
          t.build_configurations.each do |bc|

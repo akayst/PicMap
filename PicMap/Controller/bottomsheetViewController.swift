@@ -8,7 +8,6 @@
 import UIKit
 import Firebase
 import NMapsMap
-import FirebaseFirestore
 import Kingfisher
 class imgCollectionCell : UICollectionViewCell{
     
@@ -19,23 +18,43 @@ class imgCollectionCell : UICollectionViewCell{
 
 class bottomsheetViewController: UIViewController{
     
-    let db = Firestore.firestore()
+    let singleton = MySingleton.shared
     var pic:PicData?
-    var userid:String?
     var paths:[String] = []
-    var latS:String?
-    var lngS:String?
+    var memo:String?
+    var markerId:Int?
+    var isHide:Bool?
+    @IBOutlet weak var delBtn: UIButton!
+    @IBOutlet weak var memoLabel: UILabel!
     
+    @IBAction func onDel(_ sender: UIButton) {
+        let alert = UIAlertController(title: "마커 삭제", message: "정말로 삭제하시겠습니까?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "네", style: .default, handler: { action in
+            ApiModel().delMarker(self.markerId!) { isSuccess in
+                if isSuccess {
+                    for i in 0..<self.singleton.MyPics.count {
+                        if self.singleton.MyPics[i].markerId == self.markerId {
+                            self.singleton.MyPics[i].latitude = 0.0
+                            self.singleton.MyPics[i].longitude = 0.0
+                            self.singleton.MyPics.remove(at: i)
+                            break
+                        }
+                    }
+                    self.dismiss(animated: true)
+                } else {
+                    print("삭제 실패")
+                }
+            }
+        }))
+        alert.addAction(UIAlertAction(title: "괜찮아요", style: .cancel, handler: nil))
+        present(alert, animated: true)
+    }
     
-    @IBOutlet weak var IdBottom: UILabel!
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let singleton = MySingleton.shared
-        //let url = URL(string: latS!)
-        // Double(latData as! Substring)!
-        IdBottom.text = "\(self.userid!)"
-        
+        self.memoLabel.text = "\(self.memo!)"
+        self.delBtn.setTitle("", for: .normal)
+        self.delBtn.isHidden = self.isHide!
     }
 }
 

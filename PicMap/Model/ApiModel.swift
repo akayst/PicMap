@@ -14,25 +14,13 @@ import NMapsMap
 
 
 struct ApiModel{
-    
-    /*
-    var userId:String?
-    var localId:String?
-    var ownerId:String?
-    var longitude:Double?
-    var latitude:Double?
-    var memo :String?
-    var loadAddress :String?
-    var Opath:String?
-    var date:Date?
-    var markerId:Int?
- */
+
     var allJson:JSON?
-    
     func getAll() -> JSON {
         let sema = DispatchSemaphore(value:0)
         var json:JSON = JSON()
-        let url : String = "http://3.35.168.181/api/v1/record/get/" + UserDefaults.standard.string(forKey: "userEmail")! + "/"
+        let url : String = "http://3.35.168.181/api/v1/record/get-all" 
+        
         print(url)
         DispatchQueue.global().async {
             print("request now")
@@ -58,7 +46,7 @@ struct ApiModel{
         print("json.count=\(json.count)")
         return json
     }
-    
+   
     func postMarker(_ pic: inout PicData) {
         let sema = DispatchSemaphore(value:0)
         var markerId:Int = 0
@@ -183,73 +171,23 @@ struct ApiModel{
         sema.wait(timeout: .now() + 5)
         return addr
     }
-}
-
-/*
-
-func sendRequest(){ //로컬 이미지 선택 후 메모알람창까지 받은 후 api통신 포스트로 보냄
-    //포스트 방식
-    let paramter : Parameters = [
-        "userId":postData.userId, //로그인,회원가입창에서 성공시 -> 데이터를 받아옴
-        "longitude": postData.longitude, // 로컬 이미지 선택후  메모 알람창이 뜨기직전에 저장됨
-        "latitude": postData.latitude, // 로컬 이미지 선택 후 메모 알람창이 뜨기직전에 저장됨
-        "memo":postData.memo, // 메모알람창이 뜬 후 버튼클릭시에 저장됨
-        "loadAddress":postData.loadAddress
-    ]
-    let url : String = "http://3.35.168.181/api/v1/record"
     
-    AF.request(url,
-               method: .post,
-                parameters: paramter,
-                encoding: JSONEncoding.default,
-                headers: ["Content-Type":"application/json",
-                          "Accept":"application/json"
-                ]
-    ).validate(statusCode: 200..<300)
-    .responseJSON(completionHandler: {
-        (response) in
-        print(response)
-
-    })
-}
-
-
-
-
-func getResponse(){
-    let url : String = "http://3.35.168.181/api/v1/record/get-all"
-    AF.request(url,
-               method: .get,
-               parameters: nil,
-               encoding: JSONEncoding.default,
-               headers: ["Content-Type":"application/json","Accept":"application/json"]
-    ).validate(statusCode: 200..<300)
-    .responseJSON { (response) in
-        paramSender1!.memoP = response
-
-    }
-}
-
-func parseJSON(_ response: DataResponse<Any,AFError>){ //테스트용 나중에 get할때 사용할 것 swiftyJSON
-    switch response.result{
-    case .success(_):
-        if let json = try? JSON(data: response.data!){
-            for (key, subJson):(String, JSON) in json {
-                //let pic = PicData().jsonParse(json: subJson)
-                let latP = subJson["latitude"].doubleValue
-                let lonP = subJson["longitude"].doubleValue
-                let userP = subJson["userId"].stringValue
-                let memoP = subJson["memo"].stringValue
-                
-                print("\(latP)\(lonP)\(userP)\(memoP)")
-                
-                param.MyPics.append(PicData().jsonParse(json: subJson))
-                
-            }
+    func delMarker(_ markerID: Int, _ completion: @escaping (Bool) -> Void) {
+        let url = "http://3.35.168.181/api/v1/record/delete/" + String(markerID)
+        DispatchQueue.global().async {
+            AF.request(url,
+                       method: .delete,
+                        parameters: nil,
+                       encoding: JSONEncoding.default)
+                .validate(statusCode: 200..<300)
+                .response { (response) in
+                    switch response.result {
+                    case .success(_) :
+                        completion(true)
+                    case .failure(_) :
+                        completion(false)
+                    }
+                }
         }
-    case .failure(_):
-        print("f")
     }
 }
-
-*/

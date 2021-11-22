@@ -8,33 +8,75 @@
 import UIKit
 import NMapsMap
 import Firebase
-import FirebaseFirestore
 import MaterialComponents.MaterialBottomSheet
 import Alamofire
 import SwiftyJSON
 import Photos
 import BSImagePicker
-import FirebaseStorage
 import Floaty
+import CoreLocation
+import MapKit
 
-
-class mapViewController: UIViewController, NMFMapViewCameraDelegate {
-
-    //var paramSender1 = UIApplication.shared.delegate as? AppDelegate// 딕셔너리형 데이터에서 콜렉션네임의 값을 불러옴
+class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationManagerDelegate{
+    
+    var locationManager = CLLocationManager()
+    let floaty = Floaty()
+    var api: ApiModel = ApiModel()
     let singleton = MySingleton.shared
     @IBOutlet weak var mapView: NMFMapView!
-    let db = Firestore.firestore()
     let infoWindow = NMFInfoWindow()
     let dataSource = NMFInfoWindowDefaultTextSource.data()
-    let userEmail = UserDefaults.standard.string(forKey: "userEmail")
+    //let userEmail = UserDefaults.standard.string(forKey: "userEmail")
+<<<<<<< HEAD
+    @IBOutlet var locationBtn: UIButton!
+    
+    func gpsBtn() {
+        locationBtn.setTitle("", for: UIControl.State.selected)
+        locationBtn.addTarget(self, action: #selector(locationTapped), for: .touchUpInside)
+    }
+=======
     var api: ApiModel = ApiModel()
-    let floaty = Floaty()
-
+>>>>>>> 8077722f91575fa8f8969b220c19b2cd56b74a9a
+    
+    @objc func locationTapped(_ sender:UIButton){
+        if sender.isSelected == true{
+            sender.isSelected = false
+            mapView.positionMode = .direction
+            
+            print("tset")
+        }else{
+            sender.isSelected = true
+            mapView.positionMode = .compass
+            print("out tset")
+        }
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
+<<<<<<< HEAD
+        
+        mapView.positionMode = .direction
+        mapView.positionMode = .compass
+        locationManager.delegate = self //델리게이트 위임
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest //거리 정확도 설정
+        locationManager.requestWhenInUseAuthorization() // 사용자에게 허용받기 alert띄워줌
+        gpsBtn()
+        if CLLocationManager.locationServicesEnabled(){
+            print("위치 서비스 on 상태")
+            locationManager.startUpdatingLocation() //위치정보 받아오기 시작
+            
+            print("현재위치 : \(locationManager.location?.coordinate)")
+        }else{
+            print("현재 서비스 off 상태")
+        }
+        
         self.navigationController?.setNavigationBarHidden(true, animated: false)
+        
+        
         self.view.addSubview(self.floaty)
-        print(userEmail!)
+=======
+        navigationController?.setNavigationBarHidden(false, animated: true)
+>>>>>>> 8077722f91575fa8f8969b220c19b2cd56b74a9a
+        //print(userEmail!)
         var allJson:JSON = JSON()
         DispatchQueue.global().async {
             allJson = self.api.getAll()
@@ -53,6 +95,19 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
             infoWindow.close()
         } //지도 탭 했을때 정보창 닫히게 하는 함수
         
+        let logoutItem = FloatyItem()
+        logoutItem.icon = UIImage(systemName: "power")
+        logoutItem.handler = { item in
+            do {
+            try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+                print ("Error signing out: %@", signOutError)
+                }
+            let pushVC = self.storyboard?.instantiateViewController(withIdentifier: "logoViewController")
+            self.navigationController?.pushViewController(pushVC!, animated: true)
+            
+        }
+        self.floaty.addItem(item: logoutItem)
         let uploadItem = FloatyItem()
         uploadItem.icon = UIImage(systemName: "arrow.up")
         uploadItem.handler = { item in
@@ -98,7 +153,6 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                         }
                         let ok = UIAlertAction(title: "업로드", style: .default) { UIAlertAction in
                             let title = titleAlert.textFields?[0].text
-                            let friend = titleAlert.textFields?[1].text
                             pic.memo = title
                             DispatchQueue.global().async {
                                 self.api.postMarker(&pic)
@@ -129,16 +183,24 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
                 }
             })
         }
+        
         self.floaty.addItem(item: uploadItem)
         let accountItem = FloatyItem()
         accountItem.icon = UIImage(systemName: "person.fill")
         accountItem.handler = { item in
             // account handler
-            
         }
         self.floaty.addItem(item: accountItem)
-        
     }
+    
+    //위치정보 계속 업데이트 -> 위도경도 받아오기
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("didUpdateLocations")
+        var lastLoc = locations.last?.coordinate
+        var lastLat = lastLoc!.latitude
+        var lastLon = lastLoc!.longitude
+    }
+    
     
     func cameraPosition(_ latitude:Double,_ longitude:Double){
         let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
@@ -158,47 +220,42 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate {
         if pic.marker == nil {
             pic.marker = NMFMarker()
         }
-        let sdkBundle = Bundle.naverMapFramework()
         let mkid = pic.markerId!
         let lat = pic.latitude!
         let lng = pic.longitude!
         let owner = pic.ownerID
         let memo = pic.memo!
         let imgPath = pic.imgPath
+        let isMine = owner == UserDefaults.standard.string(forKey: "userEmail") ? true : false
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
-        pic.marker!.iconImage = NMF_MARKER_IMAGE_RED
+        pic.marker!.iconImage = isMine ? NMF_MARKER_IMAGE_GREEN : NMF_MARKER_IMAGE_LIGHTBLUE
         pic.marker!.mapView = mapView
         // 2021.11.09 마커 터치핸들러 이동시 -> 카메라 시점 변환 주기 -> cameraPosition()함수 제작
         pic.marker!.touchHandler = {(overlay) in
             if let marker1 = overlay as? NMFMarker{
-                if marker1.iconImage.reuseIdentifier == "\(sdkBundle.bundleIdentifier ?? "").mSNormal"{
+                self.cameraPosition(lat, lng)
+                let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
+                // MDC 바텀 시트로 실행
+                vc.paths = imgPath
+                vc.memo = memo
+                vc.markerId = mkid
+                vc.isHide = !isMine
+                
+                let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
+                bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3) //시스템배경색 그레이로 11.21
+                bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300 // 바텀시트길이
+                // 보여주기
+                self.present(bottomSheet, animated: true) {
                     self.cameraPosition(lat, lng)
-                    marker1.iconImage = NMFOverlayImage(name:"mSNormalNight", in: Bundle.naverMapFramework())
-                    //let vc = self.storyboard?.instantiateViewController(withIdentifier: "bottomsheetViewController") as! UIViewController
-                    let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
-                    // MDC 바텀 시트로 실행
-                    vc.userid = owner
-                    vc.paths = imgPath
-                    
-                    let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
-                    bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3) //시스템배경색 그레이로 11.21
-                    bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300 // 바텀시트길이
-                    // 보여주기
-                    self.present(bottomSheet, animated: true, completion: nil)
-                    
-                    self.dataSource.title = memo
-                    self.infoWindow.dataSource = self.dataSource
-                    self.infoWindow.open(with: marker1)
-                }else{
-                    marker1.iconImage = NMFOverlayImage(name: "mSNormal", in: Bundle.naverMapFramework())
-                    self.infoWindow.close()
                 }
+            }else{
+                print("마커 핸들러 생성 실패")
             }
             return true
         }
-        
     }
-    
+
+
     
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         let bound = mapView.contentBounds

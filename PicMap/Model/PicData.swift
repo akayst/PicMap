@@ -9,7 +9,6 @@ import UIKit
 import Photos
 import SwiftyJSON
 import Firebase
-import FirebaseStorage
 import NMapsMap
 
 
@@ -59,38 +58,6 @@ class PicData {
         }
     }
     
-    /*
-    func jsonParse(json:JSON)->PicData {
-        let pic = PicData()
-        pic.memo = json["memo"].stringValue
-        pic.longitude = json["longitude"].stringValue
-        pic.latitude = json["latitude"].stringValue
-
-        if let user = UserDefaults.standard.string(forKey: "userEmail") {
-            if user == json["ownerID"].stringValue {
-                // userEmail == PicData.ownerID
-                let id = json["localID"].stringValue
-                let picc = PicData(localID: id)
-                return picc
-//                pic.localID = json["localID"].stringValue
-//                let option = PHFetchOptions()
-//                let result = PHAsset.fetchAssets(withLocalIdentifiers: [pic.localID!], options: option)
-//                pic.asset = result[0]
-//                return pic
-            } else {
-                // userEmail !- PicData.ownerID
-                // Shared Picture
-                
-                return pic
-            }
-        } else {
-            print("Failed Parse PicData from json!!!")
-            return pic
-        }
-        
-    }
-    */
-    
     func parseJson(_ json: JSON) {
         self.ownerID = json["userId"].stringValue
         self.markerId = json["id"].intValue
@@ -104,41 +71,40 @@ class PicData {
     }
     
     
-    func getImage(size:CGSize) -> UIImage {
-        var image = UIImage()
-        if self.ownerID == UserDefaults.standard.string(forKey: "userEmail") {
-            let manager = PHImageManager.default()
-            let option = PHImageRequestOptions()
-            option.isSynchronous = true
-            if self.asset != nil {
-                manager.requestImage(for: self.asset!, targetSize: size, contentMode: .aspectFit, options: option, resultHandler: {(result, info)->Void in
-                    image = result!
-                })
-            }
-        } else {
-            let storage = Storage.storage()
-            let stoRef = storage.reference(forURL: "gs://pickimage-swift.appspot.com")
-            let path:String = self.ownerID! + "/" + String(self.localID!)
-            let picRef = stoRef.child(path)
-            
-            let serialQueue = DispatchQueue(label:"download")
-            serialQueue.sync {
-                picRef.getData(maxSize: 10*1024*1024, completion: { data, error in
-                    if let error = error {
-                        // download error
-                        print("download error\n \(error)")
-                    } else {
-                        // downlaod successful
-                        image = UIImage(data:data!)!
-                    }
-                })
-            }
-            serialQueue.sync {
-                return image
-            }
-        }
-        return image
-    }
+//    func getImage(size:CGSize) -> UIImage {
+//        var image = UIImage()
+//        if self.ownerID == UserDefaults.standard.string(forKey: "userEmail") {
+//            let manager = PHImageManager.default()
+//            let option = PHImageRequestOptions()
+//            option.isSynchronous = true
+//            if self.asset != nil {
+//                manager.requestImage(for: self.asset!, targetSize: size, contentMode: .aspectFit, options: option, resultHandler: {(result, info)->Void in
+//                    image = result!
+//                })
+//            }
+//        } else {
+//            //let stoRef = storage.reference(forURL: "gs://pickimage-swift.appspot.com")
+//            //let path:String = self.ownerID! + "/" + String(self.localID!)
+//            //let picRef = stoRef.child(path)
+//
+//            let serialQueue = DispatchQueue(label:"download")
+//            serialQueue.sync {
+//                picRef.getData(maxSize: 10*1024*1024, completion: { data, error in
+//                    if let error = error {
+//                        // download error
+//                        print("download error\n \(error)")
+//                    } else {
+//                        // downlaod successful
+//                        image = UIImage(data:data!)!
+//                    }
+//                })
+//            }
+//            serialQueue.sync {
+//                return image
+//            }
+//        }
+//        return image
+//    }
     
     func toData() -> Data? {
         if let asset = self.asset {
@@ -159,17 +125,4 @@ class PicData {
             self.imgPath = imgPaths.components(separatedBy: ";;")
         }
     }
-    
-    /*
-    func loadPath()->String {
-        var path:String = ""
-        self.asset?.requestContentEditingInput(with: PHContentEditingInputRequestOptions(), completionHandler: {(input, info) in
-            if let url = input?.fullSizeImageURL {
-                path = url.absoluteString
-            }
-        })
-        self.OPath = path
-        return self.OPath!
-    }
-     */
 }
