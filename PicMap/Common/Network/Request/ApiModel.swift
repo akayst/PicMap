@@ -12,7 +12,6 @@ import SwiftyJSON
 import Photos
 import NMapsMap
 
-
 struct ApiModel{
 
     var allJson:JSON?
@@ -55,7 +54,7 @@ struct ApiModel{
             "longitude":    pic.longitude!, // 로컬 이미지 선택후  메모 알람창이 뜨기직전에 저장됨
             "latitude":     pic.latitude!, // 로컬 이미지 선택 후 메모 알람창이 뜨기직전에 저장됨
             "memo":         pic.memo, // 메모알람창이 뜬 후 버튼클릭시에 저장됨
-            "loadAddress":  pic.address!
+            "loadAddress":  pic.address ?? ""
         ]
         let url: String = "http://3.35.168.181/api/v1/record"
         DispatchQueue.global().async {

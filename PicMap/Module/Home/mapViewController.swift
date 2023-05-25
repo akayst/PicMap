@@ -9,7 +9,6 @@ import UIKit
 import NMapsMap
 import Firebase
 import MaterialComponents.MaterialBottomSheet
-import Alamofire
 import SwiftyJSON
 import Photos
 import BSImagePicker
@@ -17,75 +16,28 @@ import Floaty
 import CoreLocation
 import MapKit
 
-class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationManagerDelegate{
-    
-    var locationManager = CLLocationManager()
-    let floaty = Floaty()
-    var api: ApiModel = ApiModel()
-    let singleton = MySingleton.shared
-    @IBOutlet weak var mapView: NMFMapView!
-    let infoWindow = NMFInfoWindow()
-    let dataSource = NMFInfoWindowDefaultTextSource.data()
-    //let userEmail = UserDefaults.standard.string(forKey: "userEmail")
-    @IBOutlet var locationBtn: UIButton!
-    
-    func gpsBtn() {
-        locationBtn.setTitle("", for: UIControl.State.selected)
-        locationBtn.addTarget(self, action: #selector(locationTapped), for: .touchUpInside)
-    }
-    
-    @objc func locationTapped(_ sender:UIButton){
-        if sender.isSelected == true{
-            sender.isSelected = false
-            mapView.positionMode = .direction
-            
-            print("tset")
-        }else{
-            sender.isSelected = true
-            mapView.positionMode = .compass
-            print("out tset")
-        }
-    }
+final class mapViewController: UIViewController {
+
+    private let viewModel = mapViewModel()
+    private let locationManager = CLLocationManager()
+    private let floaty = Floaty()
+    private let singleton = MySingleton.shared
+    @IBOutlet private weak var mapView: NMFMapView!
+    private let infoWindow = NMFInfoWindow()
+    private let dataSource = NMFInfoWindowDefaultTextSource.data()
+    @IBOutlet private var locationBtn: UIButton!
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupLocationManager()
+        setupView()
         
-        mapView.positionMode = .direction
-        mapView.positionMode = .compass
-        locationManager.delegate = self //델리게이트 위임
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest //거리 정확도 설정
-        locationManager.requestWhenInUseAuthorization() // 사용자에게 허용받기 alert띄워줌
-        gpsBtn()
-        if CLLocationManager.locationServicesEnabled(){
-            print("위치 서비스 on 상태")
-            locationManager.startUpdatingLocation() //위치정보 받아오기 시작
-            
-            print("현재위치 : \(locationManager.location?.coordinate)")
-        }else{
-            print("현재 서비스 off 상태")
-        }
-        
-        self.navigationController?.setNavigationBarHidden(true, animated: false)
-        
-        
-        self.view.addSubview(self.floaty)
-        //print(userEmail!)
-        var allJson:JSON = JSON()
         DispatchQueue.global().async {
-            allJson = self.api.getAll()
-            for (_, subJson) in allJson {
+            for (_, subJson) in self.viewModel.getAllData() {
                 self.singleton.MyPics.append(PicData(json: subJson))
             }
             print("PicCount=\(self.singleton.MyPics.count)")
         }
-        mapView.addCameraDelegate(delegate: self)
-        mapView.mapType = .navi
-        mapView.isIndoorMapEnabled = true
-        mapView.isNightModeEnabled = false
-        //editMarker(37.22, 126.77,"test")
-        
-        func mapView1(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
-            infoWindow.close()
-        } //지도 탭 했을때 정보창 닫히게 하는 함수
         
         let logoutItem = FloatyItem()
         logoutItem.icon = UIImage(systemName: "power")
@@ -103,9 +55,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
         let uploadItem = FloatyItem()
         uploadItem.icon = UIImage(systemName: "arrow.up")
         uploadItem.handler = { item in
-            let allAssets = PHAsset.fetchAssets(with: PHAssetMediaType.image, options: nil)
-            var evenAssets = [PHAsset]()
-            let imagePicker = ImagePickerController(selectedAssets: evenAssets)
+            let imagePicker = ImagePickerController(selectedAssets: [PHAsset]())
             imagePicker.settings.fetch.assets.supportedMediaTypes = [.image]
             imagePicker.settings.selection.max = 5 // 이미지 피커의 선택 갯수제한 5장
             self.presentImagePicker(imagePicker, select: { (asset) in
@@ -124,7 +74,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
                         let sema = DispatchSemaphore(value: 0)
                         var mkid = 0
                         DispatchQueue.global().async {
-                            pic.address = self.api.getAddr(lng: lng, lat: lat)
+                            pic.address = self.viewModel.getAddr(lng: lng, lat: lat)
                             print("pic.address=\(pic.address!)")
                             for myPic in self.singleton.MyPics {
                                 if myPic.address! == pic.address! {
@@ -147,17 +97,17 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
                             let title = titleAlert.textFields?[0].text
                             pic.memo = title
                             DispatchQueue.global().async {
-                                self.api.postMarker(&pic)
+                                self.viewModel.postMarker(&pic)
                                 self.singleton.MyPics.append(pic)
                             }
                         }
                         titleAlert.addAction(ok)
                         DispatchQueue.global().async {
-                            sema.wait(timeout: .now() + 5)
+                            self.viewModel.sema.wait(timeout: .now() + 5)
                             if mkid == 0 {      // 새로 마커 찍을때만 메모 입력
                                 self.present(titleAlert, animated: true, completion: nil)
                             } else {
-                                self.api.postImg(&pic)
+                                self.viewModel.postImage(&pic)
                                 for i in 0..<self.singleton.MyPics.count {
                                     if self.singleton.MyPics[i].markerId != mkid {
                                         continue
@@ -185,15 +135,33 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
         self.floaty.addItem(item: accountItem)
     }
     
-    //위치정보 계속 업데이트 -> 위도경도 받아오기
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        print("didUpdateLocations")
-        var lastLoc = locations.last?.coordinate
-        var lastLat = lastLoc!.latitude
-        var lastLon = lastLoc!.longitude
+    private func setupView() {
+        self.navigationController?.setNavigationBarHidden(true, animated: false)
+        self.view.addSubview(self.floaty)
+        
+        mapView.positionMode = .direction
+        mapView.positionMode = .compass
+        mapView.addCameraDelegate(delegate: self)
+        mapView.mapType = .navi
+        mapView.isIndoorMapEnabled = true
+        mapView.isNightModeEnabled = false
+        
+        // buttonSetup
+        locationBtn.setTitle("", for: UIControl.State.selected)
+        locationBtn.addTarget(self, action: #selector(locationTapped), for: .touchUpInside)
     }
     
     
+    @objc func locationTapped(_ sender:UIButton) {
+        if sender.isSelected == true{
+            sender.isSelected = false
+            mapView.positionMode = .direction
+        }else{
+            sender.isSelected = true
+            mapView.positionMode = .compass
+        }
+    }
+  
     func cameraPosition(_ latitude:Double,_ longitude:Double){
         let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
         cameraUpdate.animation = .fly
@@ -218,7 +186,7 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
         let owner = pic.ownerID
         let memo = pic.memo!
         let imgPath = pic.imgPath
-        let address = pic.address!
+        let address = pic.address ?? ""
         let isMine = owner == UserDefaults.standard.string(forKey: "userEmail") ? true : false
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = isMine ? NMF_MARKER_IMAGE_GREEN : NMF_MARKER_IMAGE_LIGHTBLUE
@@ -248,9 +216,9 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
             return true
         }
     }
+}
 
-
-    
+extension mapViewController: NMFMapViewCameraDelegate {
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         let bound = mapView.contentBounds
         for i in 0..<self.singleton.MyPics.count {
@@ -258,5 +226,35 @@ class mapViewController: UIViewController, NMFMapViewCameraDelegate, CLLocationM
                 editMarker(&self.singleton.MyPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
             }
         }
+    }
+    
+    func mapView1(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
+        infoWindow.close()
+    } //지도 탭 했을때 정보창 닫히게 하는 함수
+}
+
+extension mapViewController: CLLocationManagerDelegate {
+    
+    private func setupLocationManager() {
+        locationManager.delegate = self //델리게이트 위임
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest //거리 정확도 설정
+        locationManager.requestWhenInUseAuthorization() // 사용자에게 허용받기 alert띄워줌
+        
+        if CLLocationManager.locationServicesEnabled(){
+            print("위치 서비스 on 상태")
+            locationManager.startUpdatingLocation() //위치정보 받아오기 시작
+            
+            print("현재위치 : \(locationManager.location?.coordinate)")
+        }else{
+            print("현재 서비스 off 상태")
+        }
+    }
+    
+    //위치정보 계속 업데이트 -> 위도경도 받아오기
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("didUpdateLocations")
+        var lastLoc = locations.last?.coordinate
+        var lastLat = lastLoc!.latitude
+        var lastLon = lastLoc!.longitude
     }
 }

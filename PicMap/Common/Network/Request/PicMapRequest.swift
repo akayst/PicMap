@@ -13,7 +13,6 @@ final class PicMapRequest {
     
     /*
      네트워크 요청 메소드 타입 열거형 선언
-     
      - GET
      - POST
      - DELETE
@@ -21,12 +20,10 @@ final class PicMapRequest {
     
     /*
      SwiftyJSON -> Codable 로 변경예정
-     
      - getAll
      - getAddr
      - postImage
      - deleteMarker
-     
      */
     typealias Handler = (_ result: Bool, _ data: JSON?) -> (Bool, JSON?)
     
@@ -80,7 +77,7 @@ final class PicMapRequest {
                 case .success(let datas):
                     handler(true, JSON(datas))
                 case .failure(let error):
-                    handler(false, JSON(datas))
+                    handler(false, nil)
                     print(error.localizedDescription)
                 }
             }
