@@ -14,6 +14,7 @@ target 'PicMap' do
   pod'lottie-ios'
   pod'Floaty'
   pod'Kingfisher'
+  pod'SnapKit'
   pod'GoogleSignIn','~>5.0'
   pod'IQKeyboardManagerSwift'
   post_install do |pi|

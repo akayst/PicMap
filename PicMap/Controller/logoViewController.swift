@@ -6,41 +6,45 @@
 //
 
 import UIKit
+import SnapKit
 import Lottie
 
-
-class logoViewController: UIViewController{
+final class logoViewController: UIViewController {
     
-
-    @IBOutlet weak var loginBtn: UIButton!
+    @IBOutlet private weak var loginBtn: UIButton!
+    @IBOutlet private weak var logoLb: UILabel!
+    @IBOutlet private weak var logoViewContainer: UIView!
     
-    @IBOutlet weak var logoLb: UILabel!
-
+    private let lottieView = LottieAnimationView(name: "78072-map-pin-location")
     
-    @IBOutlet var test123: AnimationView!
     override func viewDidLoad() {
         super.viewDidLoad()
-   
-        
-        test123.contentMode = .scaleAspectFit
-        test123.loopMode = .loop
-        test123.play()
-        loginBtn.layer.cornerRadius = 10
-        loginBtn.clipsToBounds = true
-     
-    }
-    
-    
-    override func viewWillAppear(_ animated: Bool) {
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        test123.contentMode = .scaleAspectFit
-        //test123.loopMode = .loop
-        test123.play()
-    }
-    override func viewWillDisappear(_ animated: Bool) {
-        
+        setupLottieView()
+        setupButton()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        setupLottieView()
+        setupButton()
+    }
+    
+    private func setupButton() {
+        loginBtn.layer.cornerRadius = 10
+        loginBtn.clipsToBounds = true
+    }
+    
+    private func setupLottieView() {
+        logoViewContainer.backgroundColor = .clear
+        logoViewContainer.addSubview(lottieView)
+        lottieView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        lottieView.contentMode = .scaleAspectFit
+        lottieView.loopMode = .loop
+        lottieView.play()
+    }
 }
     
 
