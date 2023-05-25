@@ -24,7 +24,7 @@
 		4DF78445272D3748001DD1DE /* logoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78444272D3748001DD1DE /* logoViewController.swift */; };
 		4DF78447272D37C0001DD1DE /* loginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF78446272D37C0001DD1DE /* loginViewController.swift */; };
 		4DF78449272D394E001DD1DE /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4DF78448272D394E001DD1DE /* GoogleService-Info.plist */; };
-		4DF78453272D4F2A001DD1DE /* BuildFile in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4DF78453272D4F2A001DD1DE /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D300E68C02E532312BB4D55A /* Pods_PicMap.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF156055B54945C00BA48766 /* Pods_PicMap.framework */; };
 /* End PBXBuildFile section */
 
@@ -35,7 +35,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				4DF78453272D4F2A001DD1DE /* BuildFile in Embed Frameworks */,
+				4DF78453272D4F2A001DD1DE /* (null) in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -87,26 +87,84 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		4D652240272FDC4000DADEA7 /* Model */ = {
+		4D3B3D962A1F289100DBE0EB /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				4D652242272FDDBA00DADEA7 /* ApiModel.swift */,
-				4D562A95273D14D300EA4369 /* PicData.swift */,
+				4D3B3D992A1F289F00DBE0EB /* Resource */,
+				4D3B3D982A1F289900DBE0EB /* Network */,
+			);
+			path = Common;
+			sourceTree = "<group>";
+		};
+		4D3B3D972A1F289500DBE0EB /* Module */ = {
+			isa = PBXGroup;
+			children = (
+				4D3B3D9C2A1F28BA00DBE0EB /* Content */,
+				4D3B3D9B2A1F28AF00DBE0EB /* Login */,
+				4D3B3D9A2A1F28AC00DBE0EB /* Home */,
+			);
+			path = Module;
+			sourceTree = "<group>";
+		};
+		4D3B3D982A1F289900DBE0EB /* Network */ = {
+			isa = PBXGroup;
+			children = (
 				4D84A7D027426B51003B2B71 /* MySingleton.swift */,
+				4D3B3D9E2A1F28EB00DBE0EB /* Request */,
+				4D3B3D9D2A1F28E500DBE0EB /* Model */,
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		4D3B3D992A1F289F00DBE0EB /* Resource */ = {
+			isa = PBXGroup;
+			children = (
+				4D8838582739544D0097D270 /* 39873-map-location.json */,
+				4D88385A273A43850097D270 /* 78072-map-pin-location.json */,
+				4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */,
+			);
+			path = Resource;
+			sourceTree = "<group>";
+		};
+		4D3B3D9A2A1F28AC00DBE0EB /* Home */ = {
+			isa = PBXGroup;
+			children = (
+				4DF7842F272D35F8001DD1DE /* mapViewController.swift */,
+			);
+			path = Home;
+			sourceTree = "<group>";
+		};
+		4D3B3D9B2A1F28AF00DBE0EB /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				4DF78446272D37C0001DD1DE /* loginViewController.swift */,
+				4DF78440272D3711001DD1DE /* registerViewController.swift */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		4D3B3D9C2A1F28BA00DBE0EB /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				4D16DE6A2734FC5C0085EFF4 /* bottomsheetViewController.swift */,
+			);
+			path = Content;
+			sourceTree = "<group>";
+		};
+		4D3B3D9D2A1F28E500DBE0EB /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4D562A95273D14D300EA4369 /* PicData.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
 		};
-		4D652241272FDC6C00DADEA7 /* Controller */ = {
+		4D3B3D9E2A1F28EB00DBE0EB /* Request */ = {
 			isa = PBXGroup;
 			children = (
-				4DF78440272D3711001DD1DE /* registerViewController.swift */,
-				4DF7842F272D35F8001DD1DE /* mapViewController.swift */,
-				4DF78444272D3748001DD1DE /* logoViewController.swift */,
-				4DF78446272D37C0001DD1DE /* loginViewController.swift */,
-				4D16DE6A2734FC5C0085EFF4 /* bottomsheetViewController.swift */,
+				4D652242272FDDBA00DADEA7 /* ApiModel.swift */,
 			);
-			path = Controller;
+			path = Request;
 			sourceTree = "<group>";
 		};
 		4DF7841F272D35F8001DD1DE = {
@@ -130,11 +188,8 @@
 		4DF7842A272D35F8001DD1DE /* PicMap */ = {
 			isa = PBXGroup;
 			children = (
-				4D8838582739544D0097D270 /* 39873-map-location.json */,
-				4D88385A273A43850097D270 /* 78072-map-pin-location.json */,
-				4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */,
-				4D652241272FDC6C00DADEA7 /* Controller */,
-				4D652240272FDC4000DADEA7 /* Model */,
+				4D3B3D972A1F289500DBE0EB /* Module */,
+				4D3B3D962A1F289100DBE0EB /* Common */,
 				4DF7842B272D35F8001DD1DE /* AppDelegate.swift */,
 				4DF7842D272D35F8001DD1DE /* SceneDelegate.swift */,
 				4DF78434272D35F9001DD1DE /* Assets.xcassets */,
@@ -149,6 +204,7 @@
 		4DF7843F272D36F1001DD1DE /* View */ = {
 			isa = PBXGroup;
 			children = (
+				4DF78444272D3748001DD1DE /* logoViewController.swift */,
 				4DF78431272D35F8001DD1DE /* Main.storyboard */,
 			);
 			path = View;
