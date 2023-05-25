@@ -44,6 +44,7 @@ final class logoViewController: UIViewController {
         lottieView.contentMode = .scaleAspectFit
         lottieView.loopMode = .loop
         lottieView.play()
+        
     }
 }
     
