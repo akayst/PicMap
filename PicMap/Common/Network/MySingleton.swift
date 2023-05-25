@@ -10,6 +10,5 @@ class MySingleton {
     var MyPics:[PicData] = []
     var imgPics:[String] = []
     private init(){
-        
     }
 }
