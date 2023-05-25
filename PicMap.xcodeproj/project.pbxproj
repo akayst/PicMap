@@ -204,8 +204,8 @@
 		4DF7843F272D36F1001DD1DE /* View */ = {
 			isa = PBXGroup;
 			children = (
-				4DF78444272D3748001DD1DE /* logoViewController.swift */,
 				4DF78431272D35F8001DD1DE /* Main.storyboard */,
+				4DF78444272D3748001DD1DE /* logoViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
