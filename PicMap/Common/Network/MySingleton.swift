@@ -12,3 +12,19 @@ class MySingleton {
     private init(){
     }
 }
+
+final class Coordinator {
+    static let shared = Coordinator()
+    var source: UIViewController?
+    var destination: UIViewController?
+    
+    private init() {
+        
+    }
+    
+    func push() {
+        guard let source = source, let dest = destination else { return }
+        
+        source.navigationController?.pushViewController(dest, animated: true)
+    }
+}

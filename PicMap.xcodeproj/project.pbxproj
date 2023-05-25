@@ -14,6 +14,7 @@
 		4D88385727394E8C0097D270 /* 695-bouncy-mapmaker.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */; };
 		4D8838592739544D0097D270 /* 39873-map-location.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D8838582739544D0097D270 /* 39873-map-location.json */; };
 		4D88385B273A43850097D270 /* 78072-map-pin-location.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D88385A273A43850097D270 /* 78072-map-pin-location.json */; };
+		4DE37DEC2A1F44A200533809 /* PicMapRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE37DEB2A1F44A200533809 /* PicMapRequest.swift */; };
 		4DF7842C272D35F8001DD1DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF7842B272D35F8001DD1DE /* AppDelegate.swift */; };
 		4DF7842E272D35F8001DD1DE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF7842D272D35F8001DD1DE /* SceneDelegate.swift */; };
 		4DF78430272D35F8001DD1DE /* mapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF7842F272D35F8001DD1DE /* mapViewController.swift */; };
@@ -51,6 +52,7 @@
 		4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "695-bouncy-mapmaker.json"; sourceTree = "<group>"; };
 		4D8838582739544D0097D270 /* 39873-map-location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "39873-map-location.json"; sourceTree = "<group>"; };
 		4D88385A273A43850097D270 /* 78072-map-pin-location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "78072-map-pin-location.json"; sourceTree = "<group>"; };
+		4DE37DEB2A1F44A200533809 /* PicMapRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicMapRequest.swift; sourceTree = "<group>"; };
 		4DF78428272D35F8001DD1DE /* PicMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4DF7842B272D35F8001DD1DE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4DF7842D272D35F8001DD1DE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -163,6 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				4D652242272FDDBA00DADEA7 /* ApiModel.swift */,
+				4DE37DEB2A1F44A200533809 /* PicMapRequest.swift */,
 			);
 			path = Request;
 			sourceTree = "<group>";
@@ -366,6 +369,7 @@
 				4DF7842C272D35F8001DD1DE /* AppDelegate.swift in Sources */,
 				4DF7842E272D35F8001DD1DE /* SceneDelegate.swift in Sources */,
 				4DF78441272D3711001DD1DE /* registerViewController.swift in Sources */,
+				4DE37DEC2A1F44A200533809 /* PicMapRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
