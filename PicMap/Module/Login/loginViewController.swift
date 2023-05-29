@@ -23,6 +23,8 @@ final class loginViewController: UIViewController {
     }
     
     @IBOutlet private weak var GsiBtn: GIDSignInButton!
+	
+	@Inject private var repository: Repository
     
     override func viewDidLoad() {
         super.viewDidLoad()

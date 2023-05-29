@@ -13,6 +13,8 @@ import IQKeyboardManagerSwift
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
+	
+	@Inject private var repository: Repository
     public static var user: GIDGoogleUser!
     func sign(_ signIn:GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!){
         //print("User email: \(user.profile?.email ?? "No email")")
@@ -30,8 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             else {
                 print("Login Successful")
                 AppDelegate.user = user
-                
-              
+				self.repository.setUserInfo(user.userID)
             }
         }
     }
@@ -45,6 +46,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+		DIContainer.shared.register(Repository())
+		
         FirebaseApp.configure()
         IQKeyboardManager.shared.enable = true
         

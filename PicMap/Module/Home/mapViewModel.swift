@@ -11,6 +11,7 @@ import Photos
 
 final class mapViewModel {
     
+	@Inject private var repository: Repository
     let api = ApiModel()
     var sema = DispatchSemaphore(value: 0)
     

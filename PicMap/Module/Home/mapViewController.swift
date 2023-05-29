@@ -21,11 +21,11 @@ final class mapViewController: UIViewController {
     private let viewModel = mapViewModel()
     private let locationManager = CLLocationManager()
     private let floaty = Floaty()
-    private let singleton = MySingleton.shared
     @IBOutlet private weak var mapView: NMFMapView!
     private let infoWindow = NMFInfoWindow()
     private let dataSource = NMFInfoWindowDefaultTextSource.data()
     @IBOutlet private var locationBtn: UIButton!
+	@Inject private var repository: Repository
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,9 +34,9 @@ final class mapViewController: UIViewController {
         
         DispatchQueue.global().async {
             for (_, subJson) in self.viewModel.getAllData() {
-                self.singleton.MyPics.append(PicData(json: subJson))
+				self.repository.myPics.append(PicData(json: subJson))
             }
-            print("PicCount=\(self.singleton.MyPics.count)")
+			print("PicCount=\(self.repository.myPics.count)")
         }
         
         let logoutItem = FloatyItem()
@@ -76,7 +76,7 @@ final class mapViewController: UIViewController {
                         DispatchQueue.global().async {
                             pic.address = self.viewModel.getAddr(lng: lng, lat: lat)
                             print("pic.address=\(pic.address!)")
-                            for myPic in self.singleton.MyPics {
+							for myPic in self.repository.myPics {
                                 if myPic.address! == pic.address! {
                                     print("mkid=\(myPic.markerId!)")
                                     mkid = myPic.markerId!
@@ -98,7 +98,7 @@ final class mapViewController: UIViewController {
                             pic.memo = title
                             DispatchQueue.global().async {
                                 self.viewModel.postMarker(&pic)
-                                self.singleton.MyPics.append(pic)
+								self.repository.myPics.append(pic)
                             }
                         }
                         titleAlert.addAction(ok)
@@ -108,11 +108,11 @@ final class mapViewController: UIViewController {
                                 self.present(titleAlert, animated: true, completion: nil)
                             } else {
                                 self.viewModel.postImage(&pic)
-                                for i in 0..<self.singleton.MyPics.count {
-                                    if self.singleton.MyPics[i].markerId != mkid {
+								for i in 0..<self.repository.myPics.count {
+									if self.repository.myPics[i].markerId != mkid {
                                         continue
                                     }
-                                    self.singleton.MyPics[i].imgPath.append(pic.imgPath[0])
+									self.repository.myPics[i].imgPath.append(pic.imgPath[0])
                                     break
                                 }
                                 
@@ -221,9 +221,9 @@ final class mapViewController: UIViewController {
 extension mapViewController: NMFMapViewCameraDelegate {
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         let bound = mapView.contentBounds
-        for i in 0..<self.singleton.MyPics.count {
-            if let lat = self.singleton.MyPics[i].latitude, let lng = self.singleton.MyPics[i].longitude {
-                editMarker(&self.singleton.MyPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
+		for i in 0..<self.repository.myPics.count {
+			if let lat = self.repository.myPics[i].latitude, let lng = self.repository.myPics[i].longitude {
+				editMarker(&self.repository.myPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
             }
         }
     }
