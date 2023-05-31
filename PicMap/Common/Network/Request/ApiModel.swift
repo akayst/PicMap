@@ -171,7 +171,8 @@ struct ApiModel{
         return addr
     }
     
-    func delMarker(_ markerID: Int, _ completion: @escaping (Bool) -> Void) {
+    func delMarker(_ markerID: Int?, _ completion: @escaping (Bool) -> Void) {
+        guard let markerID = markerID else { return }
         let url = "http://3.35.168.181/api/v1/record/delete/" + String(markerID)
         DispatchQueue.global().async {
             AF.request(url,
