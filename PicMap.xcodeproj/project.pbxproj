@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D07C5212A272531001D0E7A /* UserInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D07C5202A272531001D0E7A /* UserInfo.swift */; };
+		4D07C5242A272538001D0E7A /* Inject.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D07C5222A272538001D0E7A /* Inject.swift */; };
+		4D07C5252A272538001D0E7A /* DIContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D07C5232A272538001D0E7A /* DIContainer.swift */; };
+		4D07C5272A27253E001D0E7A /* Repository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D07C5262A27253E001D0E7A /* Repository.swift */; };
 		4D16DE6B2734FC5C0085EFF4 /* bottomsheetViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16DE6A2734FC5C0085EFF4 /* bottomsheetViewController.swift */; };
 		4D562A96273D14D300EA4369 /* PicData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D562A95273D14D300EA4369 /* PicData.swift */; };
 		4D652243272FDDBA00DADEA7 /* ApiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D652242272FDDBA00DADEA7 /* ApiModel.swift */; };
@@ -46,6 +50,10 @@
 
 /* Begin PBXFileReference section */
 		4747B97D55BF786DF0D68F40 /* Pods-PicMap.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PicMap.release.xcconfig"; path = "Target Support Files/Pods-PicMap/Pods-PicMap.release.xcconfig"; sourceTree = "<group>"; };
+		4D07C5202A272531001D0E7A /* UserInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UserInfo.swift; path = PicMap/Common/Model/UserInfo.swift; sourceTree = SOURCE_ROOT; };
+		4D07C5222A272538001D0E7A /* Inject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Inject.swift; sourceTree = "<group>"; };
+		4D07C5232A272538001D0E7A /* DIContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DIContainer.swift; sourceTree = "<group>"; };
+		4D07C5262A27253E001D0E7A /* Repository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Repository.swift; sourceTree = "<group>"; };
 		4D16DE6A2734FC5C0085EFF4 /* bottomsheetViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = bottomsheetViewController.swift; sourceTree = "<group>"; };
 		4D562A95273D14D300EA4369 /* PicData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PicData.swift; sourceTree = "<group>"; };
 		4D652242272FDDBA00DADEA7 /* ApiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ApiModel.swift; sourceTree = "<group>"; };
@@ -94,6 +102,9 @@
 		4D3B3D962A1F289100DBE0EB /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				4D07C5262A27253E001D0E7A /* Repository.swift */,
+				4D07C5232A272538001D0E7A /* DIContainer.swift */,
+				4D07C5222A272538001D0E7A /* Inject.swift */,
 				4D3B3D992A1F289F00DBE0EB /* Resource */,
 				4D3B3D982A1F289900DBE0EB /* Network */,
 			);
@@ -159,6 +170,7 @@
 		4D3B3D9D2A1F28E500DBE0EB /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				4D07C5202A272531001D0E7A /* UserInfo.swift */,
 				4D562A95273D14D300EA4369 /* PicData.swift */,
 			);
 			path = Model;
@@ -362,14 +374,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D07C5242A272538001D0E7A /* Inject.swift in Sources */,
 				4D16DE6B2734FC5C0085EFF4 /* bottomsheetViewController.swift in Sources */,
 				4D562A96273D14D300EA4369 /* PicData.swift in Sources */,
 				4DF78447272D37C0001DD1DE /* loginViewController.swift in Sources */,
 				4DE37DEE2A1F4F0A00533809 /* mapViewModel.swift in Sources */,
 				4D84A7D127426B51003B2B71 /* MySingleton.swift in Sources */,
 				4DF78430272D35F8001DD1DE /* mapViewController.swift in Sources */,
+				4D07C5252A272538001D0E7A /* DIContainer.swift in Sources */,
 				4D652243272FDDBA00DADEA7 /* ApiModel.swift in Sources */,
 				4DF78445272D3748001DD1DE /* logoViewController.swift in Sources */,
+				4D07C5212A272531001D0E7A /* UserInfo.swift in Sources */,
+				4D07C5272A27253E001D0E7A /* Repository.swift in Sources */,
 				4DF7842C272D35F8001DD1DE /* AppDelegate.swift in Sources */,
 				4DF7842E272D35F8001DD1DE /* SceneDelegate.swift in Sources */,
 				4DF78441272D3711001DD1DE /* registerViewController.swift in Sources */,
