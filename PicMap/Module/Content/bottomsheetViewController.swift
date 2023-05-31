@@ -9,14 +9,13 @@ import UIKit
 import Firebase
 import NMapsMap
 import Kingfisher
-class imgCollectionCell : UICollectionViewCell{
-    
+
+final class imgCollectionCell : UICollectionViewCell {
     @IBOutlet var imgtest: UIImageView!
-    
 }
 
 
-class bottomsheetViewController: UIViewController{
+class bottomsheetViewController: UIViewController {
     
     let singleton = MySingleton.shared
     var pic:PicData?
@@ -62,7 +61,7 @@ class bottomsheetViewController: UIViewController{
     }
 }
 
-extension bottomsheetViewController: UICollectionViewDelegateFlowLayout,UICollectionViewDelegate,UICollectionViewDataSource{
+extension bottomsheetViewController: UICollectionViewDelegateFlowLayout,UICollectionViewDelegate,UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return paths.count
     }

@@ -31,14 +31,16 @@ final class mapViewController: UIViewController {
         super.viewDidLoad()
         setupLocationManager()
         setupView()
-        
+        setupFloty()
+    }
+    
+    private func setupFloty() {
         DispatchQueue.global().async {
             for (_, subJson) in self.viewModel.getAllData() {
-				self.repository.myPics.append(PicData(json: subJson))
+                self.repository.myPics.append(PicData(json: subJson))
             }
-			print("PicCount=\(self.repository.myPics.count)")
+            print("PicCount=\(self.repository.myPics.count)")
         }
-        
         let logoutItem = FloatyItem()
         logoutItem.icon = UIImage(systemName: "power")
         logoutItem.handler = { item in
@@ -60,7 +62,6 @@ final class mapViewController: UIViewController {
             imagePicker.settings.selection.max = 5 // 이미지 피커의 선택 갯수제한 5장
             self.presentImagePicker(imagePicker, select: { (asset) in
                 print("Selected: \(asset)")
-                
             }, deselect: { (asset) in
                 print("Deselected: \(asset)")
             }, cancel: { (assets) in
@@ -105,7 +106,9 @@ final class mapViewController: UIViewController {
                         DispatchQueue.global().async {
                             self.viewModel.sema.wait(timeout: .now() + 5)
                             if mkid == 0 {      // 새로 마커 찍을때만 메모 입력
-                                self.present(titleAlert, animated: true, completion: nil)
+                                DispatchQueue.main.sync {
+                                    self.present(titleAlert, animated: true, completion: nil)
+                                }
                             } else {
                                 self.viewModel.postImage(&pic)
 								for i in 0..<self.repository.myPics.count {
@@ -161,14 +164,7 @@ final class mapViewController: UIViewController {
             mapView.positionMode = .compass
         }
     }
-  
-    func cameraPosition(_ latitude:Double,_ longitude:Double){
-        let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
-        cameraUpdate.animation = .fly
-        cameraUpdate.animationDuration = 3
-        mapView.moveCamera(cameraUpdate)
-    }
-    
+      
     func editMarker(_ pic: inout PicData, _ isBound: Bool) {
         // 화면 영역에 없을 시 마커를 해제합니다
         if !isBound {
@@ -177,44 +173,54 @@ final class mapViewController: UIViewController {
             }
             return
         }
+        
         if pic.marker == nil {
             pic.marker = NMFMarker()
         }
-        let mkid = pic.markerId!
-        let lat = pic.latitude!
-        let lng = pic.longitude!
-        let owner = pic.ownerID
-        let memo = pic.memo!
-        let imgPath = pic.imgPath
-        let address = pic.address ?? ""
-        let isMine = owner == UserDefaults.standard.string(forKey: "userEmail") ? true : false
+        
+        let tempPicData = PicData.init(makerId: pic.markerId,
+                                       latitude: pic.latitude,
+                                       longitude: pic.longitude,
+                                       ownerId: pic.ownerID,
+                                       memo: pic.memo,
+                                       imgPath: pic.imgPath,
+                                       address: pic.address)
+        let isMine = tempPicData.isMine
+        
         pic.marker!.position = NMGLatLng(lat: pic.latitude!, lng: pic.longitude!)
         pic.marker!.iconImage = isMine ? NMF_MARKER_IMAGE_GREEN : NMF_MARKER_IMAGE_LIGHTBLUE
         pic.marker!.mapView = mapView
         // 2021.11.09 마커 터치핸들러 이동시 -> 카메라 시점 변환 주기 -> cameraPosition()함수 제작
         pic.marker!.touchHandler = {(overlay) in
-            if let marker1 = overlay as? NMFMarker{
-                self.cameraPosition(lat, lng)
-                let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as! bottomsheetViewController
-                
-                // MDC 바텀 시트로 실행
-                vc.paths = imgPath
-                vc.memo = memo
-                vc.markerId = mkid
-                vc.isHide = !isMine
-                vc.address = address
-                let bottomSheet: MDCBottomSheetController = MDCBottomSheetController(contentViewController: vc)
-                bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3) //시스템배경색 그레이로 11.21
-                bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300 // 바텀시트길이
-                // 보여주기
-                self.present(bottomSheet, animated: true) {
-                    self.cameraPosition(lat, lng)
-                }
-            }else{
+            if let marker1 = overlay as? NMFMarker {
+                self.cameraPosition(tempPicData.latitude, tempPicData.longitude)
+                self.showBottomSheet(picData: tempPicData)
+            }else {
                 print("마커 핸들러 생성 실패")
             }
             return true
         }
+    }
+}
+
+extension mapViewController {
+    func showBottomSheet(picData: PicData?) {
+        guard let picData = picData,
+              let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as? bottomsheetViewController else { return }
+        vc.paths = picData.imgPath
+        vc.memo = picData.memo
+        vc.markerId = picData.markerId
+        vc.isHide = !(picData.isMine)
+        vc.address = picData.address
+        
+        let bottomSheet = MDCBottomSheetController(contentViewController: vc)
+        bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
+        bottomSheet.mdc_bottomSheetPresentationController?.preferredSheetHeight = 300
+        
+        self.present(bottomSheet, animated: true) {
+            self.cameraPosition(picData.latitude, picData.longitude)
+        }
+        
     }
 }
 
@@ -231,6 +237,14 @@ extension mapViewController: NMFMapViewCameraDelegate {
     func mapView1(_ mapView: NMFMapView, didTapMap latlng: NMGLatLng, point: CGPoint) {
         infoWindow.close()
     } //지도 탭 했을때 정보창 닫히게 하는 함수
+    
+    func cameraPosition(_ latitude:Double? ,_ longitude:Double?) {
+        guard let latitude = latitude, let longitude = longitude else { return }
+        let cameraUpdate = NMFCameraUpdate(scrollTo: NMGLatLng(lat: latitude, lng: longitude))
+        cameraUpdate.animation = .fly
+        cameraUpdate.animationDuration = 3
+        mapView.moveCamera(cameraUpdate)
+    }
 }
 
 extension mapViewController: CLLocationManagerDelegate {
@@ -243,7 +257,6 @@ extension mapViewController: CLLocationManagerDelegate {
         if CLLocationManager.locationServicesEnabled(){
             print("위치 서비스 on 상태")
             locationManager.startUpdatingLocation() //위치정보 받아오기 시작
-            
             print("현재위치 : \(locationManager.location?.coordinate)")
         }else{
             print("현재 서비스 off 상태")

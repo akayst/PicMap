@@ -13,25 +13,39 @@ import NMapsMap
 
 
 class PicData {
-    var asset:PHAsset?
-    var ownerID:String?
-    var imgPath:[String] = []
-    var localID:String?
-    var latitude:Double?
-    var longitude:Double?
-    var address:String?
-    var date:Date?
-    var memo:String?
-    var markerId:Int?
-    var marker:NMFMarker?
-    
+    var asset: PHAsset?
+    var ownerID: String?
+    var imgPath: [String] = []
+    var localID: String?
+    var latitude: Double?
+    var longitude: Double?
+    var address: String?
+    var date: Date?
+    var memo: String?
+    var markerId: Int?
+    var marker: NMFMarker?
+    // onlyLocal
+    var isMine: Bool = false
    
     init(){
         self.asset = nil
     }
+    
+    init(makerId: Int?, latitude: Double?, longitude: Double?, ownerId: String?, memo: String?, imgPath: [String], address: String?) {
+        self.markerId = makerId
+        self.latitude = latitude
+        self.longitude = longitude
+        self.ownerID = ownerId
+        self.memo = memo
+        self.imgPath = imgPath
+        self.address = address
+        self.isMine = self.ownerID == UserDefaults.standard.string(forKey: "userEmail") ? true : false
+    }
+    
     init(json: JSON) {
         parseJson(json)
     }
+    
     init(asset:PHAsset) {
         self.asset = asset
         self.localID = self.asset!.localIdentifier
@@ -43,6 +57,7 @@ class PicData {
             self.date = date
         }
     }
+    
     init(localID:String) {
         self.localID = localID
         let option = PHFetchOptions()
