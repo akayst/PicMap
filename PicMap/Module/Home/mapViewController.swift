@@ -192,7 +192,7 @@ final class mapViewController: UIViewController {
         pic.marker!.mapView = mapView
         // 2021.11.09 마커 터치핸들러 이동시 -> 카메라 시점 변환 주기 -> cameraPosition()함수 제작
         pic.marker!.touchHandler = {(overlay) in
-            if let marker1 = overlay as? NMFMarker {
+            if let _ = overlay as? NMFMarker {
                 self.cameraPosition(tempPicData.latitude, tempPicData.longitude)
                 self.showBottomSheet(picData: tempPicData)
             }else {
