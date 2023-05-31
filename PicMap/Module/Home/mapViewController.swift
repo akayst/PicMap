@@ -207,11 +207,7 @@ extension mapViewController {
     func showBottomSheet(picData: PicData?) {
         guard let picData = picData,
               let vc = self.storyboard?.instantiateViewController(identifier: "bottomsheetViewController") as? bottomsheetViewController else { return }
-        vc.paths = picData.imgPath
-        vc.memo = picData.memo
-        vc.markerId = picData.markerId
-        vc.isHide = !(picData.isMine)
-        vc.address = picData.address
+        vc.picData = picData
         
         let bottomSheet = MDCBottomSheetController(contentViewController: vc)
         bottomSheet.scrimColor = UIColor.systemGray.withAlphaComponent(0.3)
