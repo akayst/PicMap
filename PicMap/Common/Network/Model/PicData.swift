@@ -41,6 +41,17 @@ class PicData {
         self.address = address
         self.isMine = self.ownerID == UserDefaults.standard.string(forKey: "userEmail") ? true : false
     }
+	
+	init(record: Record, isMine: Bool = true) {
+		self.markerId = record.id
+		self.latitude = record.latitude
+		self.longitude = record.longitude
+		self.ownerID = record.userID
+		self.memo = record.memo
+		self.imgPath = record.totalImageURL.components(separatedBy: ";;")
+		self.address = record.loadAddress
+		self.isMine = isMine
+	}
     
     init(json: JSON) {
         parseJson(json)
