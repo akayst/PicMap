@@ -7,16 +7,64 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "74433642-52AE-436A-92B8-9D4C73946E53"
+            uuid = "2C4F2F58-ACDB-4338-B341-3939B6351356"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "PicMap/Common/Network/Request/ApiModel.swift"
+            filePath = "PicMap/Common/Network/Service/RecordService.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "83"
-            endingLineNumber = "83"
-            landmarkName = "postImg(_:)"
+            startingLineNumber = "20"
+            endingLineNumber = "20"
+            landmarkName = "getRecordList(_:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2C4F2F58-ACDB-4338-B341-3939B6351356 - 538e2d6ac8c5a9fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PicMap.RecordService.getRecordList(Swift.String) -&gt; Combine.AnyPublisher&lt;Swift.Array&lt;PicMap.Record&gt;, PicMap.NetworkError&gt;"
+                  moduleName = "PicMap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/akay/PicMap/PicMap/Common/Network/Service/RecordService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "52">
+               </Location>
+               <Location
+                  uuid = "2C4F2F58-ACDB-4338-B341-3939B6351356 - 538e2d6ac8c5a9fd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "PicMap.RecordService.getRecordList(Swift.String) -&gt; Combine.AnyPublisher&lt;Swift.Array&lt;PicMap.Record&gt;, PicMap.NetworkError&gt;"
+                  moduleName = "PicMap"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/akay/PicMap/PicMap/Common/Network/Service/RecordService.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "20"
+                  endingLineNumber = "20"
+                  offsetFromSymbolStart = "48">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2B43D448-2964-4CBE-BCC6-2489D2FC9195"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "PicMap/AppDelegate.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "37"
+            endingLineNumber = "37"
+            landmarkName = "sign(_:didSignInFor:withError:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -43,7 +43,7 @@ final class Repository {
 						return
 				}
 			} receiveValue: { result in
-				self.myPics = result.map { PicData(record: $0, isMine: $0.userID == self.userId) }
+				self.myPics = result.map { PicData(record: $0, isMine: $0.userId == self.userId) }
 			}.store(in: &subscription)
 	}
 	
