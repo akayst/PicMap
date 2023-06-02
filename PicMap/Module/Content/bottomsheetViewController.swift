@@ -17,7 +17,7 @@ final class imgCollectionCell : UICollectionViewCell {
 
 class bottomsheetViewController: UIViewController {
     
-    let singleton = MySingleton.shared
+ //   let singleton = MySingleton.shared
     var pic:PicData?
     var paths:[String] = []
     var memo:String?
@@ -30,26 +30,26 @@ class bottomsheetViewController: UIViewController {
     @IBOutlet var addressLabel: UILabel!
     
     @IBAction func onDel(_ sender: UIButton) {
-        let alert = UIAlertController(title: "마커 삭제", message: "정말로 삭제하시겠습니까?", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "네", style: .default, handler: { action in
-            ApiModel().delMarker(self.markerId!) { isSuccess in
-                if isSuccess {
-                    for i in 0..<self.singleton.MyPics.count {
-                        if self.singleton.MyPics[i].markerId == self.markerId {
-                            self.singleton.MyPics[i].latitude = 0.0
-                            self.singleton.MyPics[i].longitude = 0.0
-                            self.singleton.MyPics.remove(at: i)
-                            break
-                        }
-                    }
-                    self.dismiss(animated: true)
-                } else {
-                    print("삭제 실패")
-                }
-            }
-        }))
-        alert.addAction(UIAlertAction(title: "괜찮아요", style: .cancel, handler: nil))
-        present(alert, animated: true)
+//        let alert = UIAlertController(title: "마커 삭제", message: "정말로 삭제하시겠습니까?", preferredStyle: .alert)
+//        alert.addAction(UIAlertAction(title: "네", style: .default, handler: { action in
+//            ApiModel().delMarker(self.markerId!) { isSuccess in
+//                if isSuccess {
+//                    for i in 0..<self.singleton.MyPics.count {
+//                        if self.singleton.MyPics[i].markerId == self.markerId {
+//                            self.singleton.MyPics[i].latitude = 0.0
+//                            self.singleton.MyPics[i].longitude = 0.0
+//                            self.singleton.MyPics.remove(at: i)
+//                            break
+//                        }
+//                    }
+//                    self.dismiss(animated: true)
+//                } else {
+//                    print("삭제 실패")
+//                }
+//            }
+//        }))
+//        alert.addAction(UIAlertAction(title: "괜찮아요", style: .cancel, handler: nil))
+//        present(alert, animated: true)
     }
     
     override func viewDidLoad() {
