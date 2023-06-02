@@ -14,6 +14,7 @@ final class Repository {
 	var imgPics: [String]
 	
 	@Inject private var recordService: RecordService
+	@Inject private var roadAddrService: RoadAddrService
 	private var subscription = Set<AnyCancellable>()
 	
 	init() {
@@ -43,7 +44,7 @@ final class Repository {
 						return
 				}
 			} receiveValue: { result in
-				self.myPics = result.map { PicData(record: $0, isMine: $0.userID == self.userId) }
+				self.myPics = result.map { PicData(record: $0, isMine: $0.userId == self.userId) }
 			}.store(in: &subscription)
 	}
 	
@@ -118,6 +119,23 @@ final class Repository {
 				}
 			} receiveValue: { result in
 					// image upload success
+			}.store(in: &subscription)
+	}
+	
+	func getRoadAddrFromCoordinate(lat: Double, lng: Double, result: @escaping (String) -> Void) {
+		roadAddrService.geocoding(lat, lng)
+			.sink { response in
+				switch response {
+					case .failure(let err):
+						print("road addr response fail")
+						print(err.errorDescription)
+						print(err)
+						result("--")
+					case .finished:
+						return
+				}
+			} receiveValue: { addr in
+				result(addr.error.message + addr.error.errorCode + addr.error.details)
 			}.store(in: &subscription)
 	}
 }

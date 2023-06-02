@@ -10,7 +10,7 @@ import Foundation
 protocol EndPoint {
 	var scheme: String { get }
 	var host: String { get }
-	var port: Int { get }
+	var port: Int? { get }
 	var path: String { get }
 	var method: HTTPMethod { get }
 	var header: [String: String]? { get }
@@ -22,8 +22,8 @@ extension EndPoint {
 		return "http"
 	}
 
-	var port: Int {
-		return 80
+	var port: Int? {
+		return nil
 	}
 	
 	var requestTimeOut: Float {

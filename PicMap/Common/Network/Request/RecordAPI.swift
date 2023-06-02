@@ -31,7 +31,7 @@ extension RecordAPI: EndPoint {
 		return "hyuny840501.cafe24.com"
 	}
 	
-	var port: Int {
+	var port: Int? {
 		return 8081
 	}
 	

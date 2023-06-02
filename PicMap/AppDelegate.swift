@@ -47,6 +47,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
 		DIContainer.shared.register(RecordService())
+		DIContainer.shared.register(RoadAddrService())
 		DIContainer.shared.register(Repository())
 		
         FirebaseApp.configure()
