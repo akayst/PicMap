@@ -40,11 +40,7 @@ final class mapViewModel {
     
     init() {
 		bind()
-		repository.fetchMarkers()
 		getAddr(lng: 127.1114893, lat: 37.3614463)
-		repository.getRoadAddrFromCoordinate(lat: 37.3614463, lng: 127.1114893) { addr in
-			print("도로명주소:\(addr)")
-		}
 	}
 	
 	private func bind() {
