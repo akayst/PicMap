@@ -13,12 +13,4 @@ struct RequestRecord: Codable {
 	var latitude: Double
 	var memo: String
 	var loadAddress: String
-	
-	enum CodingKeys: String, CodingKey {
-		case userId = "userId"
-		case longitude = "longitude"
-		case latitude = "latitude"
-		case memo = "memo"
-		case loadAddress = "loadAddress"
-	}
 }

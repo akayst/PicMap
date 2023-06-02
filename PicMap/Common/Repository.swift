@@ -25,9 +25,6 @@ final class Repository {
 	
 	
 	func setUserInfo(_ userId: String) {
-		if userId.isEmpty {
-			UserDefaults.standard.removeObject(forKey: "userEmail")
-		}
 		UserDefaults.standard.set(userId, forKey: "userEmail")
 		userInfo = UserInfo(userId: userId)
 	}
@@ -46,7 +43,7 @@ final class Repository {
 						return
 				}
 			} receiveValue: { result in
-				self.myPics.append(contentsOf: result.map { PicData(record: $0, isMine: $0.userID == self.userId) })
+				self.myPics = result.map { PicData(record: $0, isMine: $0.userID == self.userId) }
 			}.store(in: &subscription)
 	}
 	

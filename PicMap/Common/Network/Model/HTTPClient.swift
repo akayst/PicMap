@@ -28,6 +28,7 @@ extension HTTPClient {
 		var urlComponents = URLComponents()
 		urlComponents.scheme = endPoint.scheme
 		urlComponents.host = endPoint.host
+		urlComponents.port = endPoint.port
 		urlComponents.path = endPoint.path
 		urlComponents.queryItems = params?.map { URLQueryItem(name: $0.key, value: $0.value) }
 		
@@ -67,6 +68,7 @@ extension HTTPClient {
 		var urlComponents = URLComponents()
 		urlComponents.scheme = endPoint.scheme
 		urlComponents.host = endPoint.host
+		urlComponents.port = endPoint.port
 		urlComponents.path = endPoint.path
 		urlComponents.queryItems = params?.map { URLQueryItem(name: $0.key, value: $0.value) }
 		

@@ -48,7 +48,7 @@ class PicData {
 		self.longitude = record.longitude
 		self.ownerID = record.userID
 		self.memo = record.memo
-		self.imgPath = record.totalImageURL.components(separatedBy: ";;")
+		self.imgPath = record.totalImageURL?.components(separatedBy: ";;") ?? []
 		self.address = record.loadAddress
 		self.isMine = isMine
 	}

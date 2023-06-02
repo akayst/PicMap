@@ -19,16 +19,6 @@ struct Record: Codable {
 	var loadAddress: String
 	var longitude: Double
 	var memo: String
-	var totalImageURL: String = ""
-	var userID: String
-	
-	enum CodingKeys: String, CodingKey {
-		case id = "id"
-		case latitude = "latitude"
-		case loadAddress = "loadAddress"
-		case longitude = "longitude"
-		case memo = "memo"
-		case totalImageURL = "totalImageUrl"
-		case userID = "userId"
-	}
+	var totalImageURL: String?
+	var userId: String
 }

@@ -27,16 +27,24 @@ extension RecordAPI: EndPoint {
 		}
 	}
 	
+	var host: String {
+		return "hyuny840501.cafe24.com"
+	}
+	
+	var port: Int {
+		return 8081
+	}
+	
 	var path: String {
 		switch self {
 			case .fetchMyMarkers(let userId):
-				return "/api/v1/record/get/\(userId)"
+				return "/pickmap/api/v1/record/get/\(userId)"
 			case .newRecord:
-				return "/api/v1/record"
+				return "/pickmap/api/v1/record"
 			case .deleteRecord(let recordId):
-				return "/api/v1/record/delete/\(recordId)"
+				return "/pickmap/api/v1/record/delete/\(recordId)"
 			case .uploadImages:
-				return "/api/v1/record/post/images"
+				return "/pickmap/api/v1/record/post/images"
 		}
 	}
 	

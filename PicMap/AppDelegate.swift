@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             else {
                 print("Login Successful")
                 AppDelegate.user = user
-				self.repository.setUserInfo(user.userID)
+				self.repository.setUserInfo(user.profile.email)
             }
         }
     }
