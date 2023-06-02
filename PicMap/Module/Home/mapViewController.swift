@@ -15,6 +15,22 @@ import BSImagePicker
 import Floaty
 import CoreLocation
 import MapKit
+import Combine
+
+enum mapViewControllerMessage {
+    enum Action {
+        case getAddr
+        case postMarker(record: RequestRecord)
+        case deleteMarker(markerId: Int)
+        case postImage(markerId: Int, isNewMarker: Bool, picData: PicData?, images: Data?)
+        case fetchMarker
+    }
+    
+    enum ViewState {
+        case loading
+        case presenting
+    }
+}
 
 final class mapViewController: UIViewController {
 
@@ -24,23 +40,41 @@ final class mapViewController: UIViewController {
     @IBOutlet private weak var mapView: NMFMapView!
     private let infoWindow = NMFInfoWindow()
     private let dataSource = NMFInfoWindowDefaultTextSource.data()
+    
+    let input = PassthroughSubject<mapViewControllerMessage.Action, Never>()
+    let output = PassthroughSubject<mapViewControllerMessage.ViewState, Never>()
+    
+    private var subscription = Set<AnyCancellable>()
+   
     @IBOutlet private var locationBtn: UIButton!
-	@Inject private var repository: Repository
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupLocationManager()
+        viewModel.input.send(.fetchMarker)
         setupView()
         setupFloty()
     }
     
+    private func bind() {
+        viewModel.output
+            .sink { output in
+                switch output {
+                case .loading:
+                    print("-> 7870 loading")
+                case .presenting:
+                    print("-> 7870 presenting")
+                }
+            }.store(in: &subscription)
+    }
+    
     private func setupFloty() {
-        DispatchQueue.global().async {
-            for (_, subJson) in self.viewModel.getAllData() {
-                self.repository.myPics.append(PicData(json: subJson))
-            }
-            print("PicCount=\(self.repository.myPics.count)")
-        }
+//        DispatchQueue.global().async {
+//            for (_, subJson) in self.viewModel.picDatas {
+//                self.repository.myPics.append(PicData(json: subJson))
+//            }
+//            print("PicCount=\(viewModel.picDatas.count)")
+//        }
         let logoutItem = FloatyItem()
         logoutItem.icon = UIImage(systemName: "power")
         logoutItem.handler = { item in
@@ -77,7 +111,7 @@ final class mapViewController: UIViewController {
                         DispatchQueue.global().async {
                             pic.address = self.viewModel.getAddr(lng: lng, lat: lat)
                             print("pic.address=\(pic.address!)")
-							for myPic in self.repository.myPics {
+                            for myPic in self.viewModel.picDatas {
                                 if myPic.address! == pic.address! {
                                     print("mkid=\(myPic.markerId!)")
                                     mkid = myPic.markerId!
@@ -98,8 +132,9 @@ final class mapViewController: UIViewController {
                             let title = titleAlert.textFields?[0].text
                             pic.memo = title
                             DispatchQueue.global().async {
-                                self.viewModel.postMarker(&pic)
-								self.repository.myPics.append(pic)
+                                
+                                self.viewModel.input.send(.postMarker(picData: pic))
+								self.viewModel.picDatas.append(pic)
                             }
                         }
                         titleAlert.addAction(ok)
@@ -111,11 +146,11 @@ final class mapViewController: UIViewController {
                                 }
                             } else {
                                 self.viewModel.postImage(&pic)
-								for i in 0..<self.repository.myPics.count {
-									if self.repository.myPics[i].markerId != mkid {
+                                for i in 0..<self.viewModel.picDatas.count {
+									if self.viewModel.picDatas[i].markerId != mkid {
                                         continue
                                     }
-									self.repository.myPics[i].imgPath.append(pic.imgPath[0])
+									self.viewModel.picDatas[i].imgPath.append(pic.imgPath[0])
                                     break
                                 }
                                 
@@ -227,9 +262,9 @@ extension mapViewController {
 extension mapViewController: NMFMapViewCameraDelegate {
     func mapViewCameraIdle(_ mapView: NMFMapView) {
         let bound = mapView.contentBounds
-		for i in 0..<self.repository.myPics.count {
-			if let lat = self.repository.myPics[i].latitude, let lng = self.repository.myPics[i].longitude {
-				editMarker(&self.repository.myPics[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
+		for i in 0..<self.viewModel.picDatas.count {
+			if let lat = self.viewModel.picDatas[i].latitude, let lng = self.viewModel.picDatas[i].longitude {
+				editMarker(&self.viewModel.picDatas[i], bound.hasPoint(NMGLatLng(lat: lat, lng: lng)))
             }
         }
     }

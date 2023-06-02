@@ -32,7 +32,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
             else {
                 print("Login Successful")
                 AppDelegate.user = user
-				self.repository.setUserInfo(user.userID)
+				self.repository.setUserInfo(user.profile.email)
             }
         }
     }
@@ -46,6 +46,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate, GIDSignInDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+		DIContainer.shared.register(RecordService())
+		DIContainer.shared.register(RoadAddrService())
 		DIContainer.shared.register(Repository())
 		
         FirebaseApp.configure()
