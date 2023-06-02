@@ -17,6 +17,7 @@
 		4D88385727394E8C0097D270 /* 695-bouncy-mapmaker.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */; };
 		4D8838592739544D0097D270 /* 39873-map-location.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D8838582739544D0097D270 /* 39873-map-location.json */; };
 		4D88385B273A43850097D270 /* 78072-map-pin-location.json in Resources */ = {isa = PBXBuildFile; fileRef = 4D88385A273A43850097D270 /* 78072-map-pin-location.json */; };
+		4D9C15E42A29E815007A4E41 /* BaseRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9C15E32A29E815007A4E41 /* BaseRepository.swift */; };
 		4DE37DEC2A1F44A200533809 /* PicMapRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE37DEB2A1F44A200533809 /* PicMapRequest.swift */; };
 		4DE37DEE2A1F4F0A00533809 /* mapViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DE37DED2A1F4F0A00533809 /* mapViewModel.swift */; };
 		4DF7842C272D35F8001DD1DE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF7842B272D35F8001DD1DE /* AppDelegate.swift */; };
@@ -68,6 +69,7 @@
 		4D88385627394E8C0097D270 /* 695-bouncy-mapmaker.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "695-bouncy-mapmaker.json"; sourceTree = "<group>"; };
 		4D8838582739544D0097D270 /* 39873-map-location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "39873-map-location.json"; sourceTree = "<group>"; };
 		4D88385A273A43850097D270 /* 78072-map-pin-location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = "78072-map-pin-location.json"; sourceTree = "<group>"; };
+		4D9C15E32A29E815007A4E41 /* BaseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepository.swift; sourceTree = "<group>"; };
 		4DE37DEB2A1F44A200533809 /* PicMapRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PicMapRequest.swift; sourceTree = "<group>"; };
 		4DE37DED2A1F4F0A00533809 /* mapViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = mapViewModel.swift; sourceTree = "<group>"; };
 		4DF78428272D35F8001DD1DE /* PicMap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PicMap.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -118,6 +120,7 @@
 		4D3B3D962A1F289100DBE0EB /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				4D9C15E22A29E7F2007A4E41 /* BaseProtocol */,
 				4D07C5262A27253E001D0E7A /* Repository.swift */,
 				4D07C5232A272538001D0E7A /* DIContainer.swift */,
 				4D07C5222A272538001D0E7A /* Inject.swift */,
@@ -207,6 +210,14 @@
 				5AEFC17F2A28876900F30D5E /* RecordAPI.swift */,
 			);
 			path = Request;
+			sourceTree = "<group>";
+		};
+		4D9C15E22A29E7F2007A4E41 /* BaseProtocol */ = {
+			isa = PBXGroup;
+			children = (
+				4D9C15E32A29E815007A4E41 /* BaseRepository.swift */,
+			);
+			path = BaseProtocol;
 			sourceTree = "<group>";
 		};
 		4DF7841F272D35F8001DD1DE = {
@@ -429,6 +440,7 @@
 				5AEFC1842A28944100F30D5E /* HTTPClient.swift in Sources */,
 				5AEFC1732A287EA500F30D5E /* Record.swift in Sources */,
 				5AEFC1822A28887700F30D5E /* RequestRecord.swift in Sources */,
+				4D9C15E42A29E815007A4E41 /* BaseRepository.swift in Sources */,
 				4DE37DEC2A1F44A200533809 /* PicMapRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
