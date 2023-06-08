@@ -13,15 +13,19 @@ enum RoadAddrAPI {
 
 extension RoadAddrAPI: EndPoint {
 	var scheme: String {
-		return "https"
+		return "http"
 	}
 	
 	var host: String {
-		return "naveropenapi.apigw.ntruss.com"
+		return "hyuny840501.cafe24.com"
 	}
 	
 	var path: String {
-		return "/map-reversegeocode/v2/gc"
+		return "/pickmap/api/v1/gc/rev"
+	}
+	
+	var port: Int? {
+		return 8081
 	}
 	
 	var method: HTTPMethod {
@@ -29,9 +33,6 @@ extension RoadAddrAPI: EndPoint {
 	}
 	
 	var header: [String : String]? {
-		return ["Accept": "*/*",
-				"Content-Type": "application/json",
-				"X-NCP-APIGW-API-KEY": "lvZ2SejTt6MgwOtXjuNyRifmdmpl1DcLp1scu9KT",
-				"X-NCP-APIGW-API-KEY-ID": "77l5jo9x2b"]
+		return nil
 	}
 }

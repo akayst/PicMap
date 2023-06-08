@@ -15,6 +15,7 @@ enum RepositryMessage {
         case deleteMarker(markerId: Int)
         case uploadImageWithNewMarker(markerId: Int, images: Data?)
         case uploadImage(markerId: Int, images: PicData?)
+		case getRoadAddrFromCoordinate(lat: Double, lng: Double)
     }
     
     enum output {
@@ -22,6 +23,7 @@ enum RepositryMessage {
         case postedMarker
         case deletedMarker
         case uploadedImage
+		case roadAddrFromCoordinate(roadAddr: String)
     }
 }
 
@@ -83,19 +85,21 @@ final class Repository: RepositoryInterface {
 	}
 	
 	func getRoadAddrFromCoordinate(lat: Double, lng: Double, result: @escaping (String) -> Void) {
-		roadAddrService.geocoding(lat, lng)
+		roadAddrService.revGeocoding(lat, lng)
 			.sink { response in
 				switch response {
 					case .failure(let err):
-						print("road addr response fail")
-						print(err.errorDescription)
 						print(err)
-						result("--")
 					case .finished:
 						return
 				}
-			} receiveValue: { addr in
-				result(addr.error.message + addr.error.errorCode + addr.error.details)
+			} receiveValue: { roadAddr in
+				guard roadAddr.code != 200 else {
+					print("오류가 발생했습니다. code:\(roadAddr.code)\n\(roadAddr.reason)")
+					result("")
+					return
+				}
+				result("\(roadAddr.addr)")
 			}.store(in: &subscription)
 	}
 }
@@ -189,4 +193,19 @@ private extension Repository {
                     // image upload success
             }.store(in: &subscription)
     }
+	
+	func getRoadAddressFromCoordinate(_ lat: Double, _ lng: Double) {
+		roadAddrService.revGeocoding(lat, lng)
+			.sink { response in
+				switch response {
+					case .failure(let err):
+						print(err)
+					case .finished:
+						return
+				}
+			} receiveValue: { roadAddr in
+				self.output.send(.roadAddrFromCoordinate(roadAddr: roadAddr.addr))
+			}.store(in: &subscription)
+	}
+	
 }

@@ -14,7 +14,7 @@ import BSImagePicker
 enum mapViewModelMessage {
     enum Action {
         case getAllData
-        case getAddr
+		case getRoadAddr(lat: Double, lng: Double)
         case postMarker(picData: PicData?)
         case deleteMarker(markerId: Int)
         case postImage(markerId: Int, isNewMarker: Bool, picData: PicData?, images: Data?)
@@ -40,7 +40,6 @@ final class mapViewModel {
     
     init() {
 		bind()
-		getAddr(lng: 127.1114893, lat: 37.3614463)
 	}
 	
 	private func bind() {
@@ -82,6 +81,8 @@ final class mapViewModel {
 				repository.input.send(isNewMarker
 									  ? .uploadImageWithNewMarker(markerId: markerId, images: data)
 									  : .uploadImage(markerId: markerId, images: picData))
+			case .getRoadAddr(let lat, let lng):
+				repository.input.send(.getRoadAddrFromCoordinate(lat: lat, lng: lng))
 			default:
 				break
 		}

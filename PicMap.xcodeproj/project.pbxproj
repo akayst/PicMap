@@ -33,8 +33,7 @@
 		4DF78453272D4F2A001DD1DE /* (null) in Embed Frameworks */ = {isa = PBXBuildFile; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5A07A32A2A29C152009AECE0 /* RoadAddrAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A07A3292A29C152009AECE0 /* RoadAddrAPI.swift */; };
 		5A07A32C2A29C595009AECE0 /* RoadAddrService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A07A32B2A29C595009AECE0 /* RoadAddrService.swift */; };
-		5A07A32E2A29C69D009AECE0 /* RoadAddressResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A07A32D2A29C69D009AECE0 /* RoadAddressResponse.swift */; };
-		5A07A3302A29F4A6009AECE0 /* RoadAddrError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A07A32F2A29F4A6009AECE0 /* RoadAddrError.swift */; };
+		5A1679A42A31B9C700B41C87 /* RoadAddrResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5A1679A32A31B9C700B41C87 /* RoadAddrResponse.swift */; };
 		5AEFC1732A287EA500F30D5E /* Record.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFC1722A287EA500F30D5E /* Record.swift */; };
 		5AEFC1792A2881E400F30D5E /* EndPoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFC1782A2881E400F30D5E /* EndPoint.swift */; };
 		5AEFC17B2A28822C00F30D5E /* HTTPMethod.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AEFC17A2A28822C00F30D5E /* HTTPMethod.swift */; };
@@ -90,8 +89,7 @@
 		4DF78448272D394E001DD1DE /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		5A07A3292A29C152009AECE0 /* RoadAddrAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadAddrAPI.swift; sourceTree = "<group>"; };
 		5A07A32B2A29C595009AECE0 /* RoadAddrService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadAddrService.swift; sourceTree = "<group>"; };
-		5A07A32D2A29C69D009AECE0 /* RoadAddressResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadAddressResponse.swift; sourceTree = "<group>"; };
-		5A07A32F2A29F4A6009AECE0 /* RoadAddrError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadAddrError.swift; sourceTree = "<group>"; };
+		5A1679A32A31B9C700B41C87 /* RoadAddrResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoadAddrResponse.swift; sourceTree = "<group>"; };
 		5AEFC1722A287EA500F30D5E /* Record.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Record.swift; sourceTree = "<group>"; };
 		5AEFC1782A2881E400F30D5E /* EndPoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndPoint.swift; sourceTree = "<group>"; };
 		5AEFC17A2A28822C00F30D5E /* HTTPMethod.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPMethod.swift; sourceTree = "<group>"; };
@@ -198,8 +196,6 @@
 			isa = PBXGroup;
 			children = (
 				4D07C5202A272531001D0E7A /* UserInfo.swift */,
-				5A07A32D2A29C69D009AECE0 /* RoadAddressResponse.swift */,
-				5A07A32F2A29F4A6009AECE0 /* RoadAddrError.swift */,
 				4D562A95273D14D300EA4369 /* PicData.swift */,
 				5AEFC1782A2881E400F30D5E /* EndPoint.swift */,
 				5AEFC1812A28887700F30D5E /* RequestRecord.swift */,
@@ -208,6 +204,7 @@
 				5AEFC1722A287EA500F30D5E /* Record.swift */,
 				5AEFC1832A28944100F30D5E /* HTTPClient.swift */,
 				5AEFC18A2A28A06F00F30D5E /* ImageUploadResponse.swift */,
+				5A1679A32A31B9C700B41C87 /* RoadAddrResponse.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -434,6 +431,7 @@
 				5AEFC17B2A28822C00F30D5E /* HTTPMethod.swift in Sources */,
 				5AEFC1792A2881E400F30D5E /* EndPoint.swift in Sources */,
 				4D562A96273D14D300EA4369 /* PicData.swift in Sources */,
+				5A1679A42A31B9C700B41C87 /* RoadAddrResponse.swift in Sources */,
 				4DF78447272D37C0001DD1DE /* loginViewController.swift in Sources */,
 				4DE37DEE2A1F4F0A00533809 /* mapViewModel.swift in Sources */,
 				4DF78430272D35F8001DD1DE /* mapViewController.swift in Sources */,
@@ -442,7 +440,6 @@
 				5A07A32C2A29C595009AECE0 /* RoadAddrService.swift in Sources */,
 				4D652243272FDDBA00DADEA7 /* ApiModel.swift in Sources */,
 				5AEFC18B2A28A06F00F30D5E /* ImageUploadResponse.swift in Sources */,
-				5A07A3302A29F4A6009AECE0 /* RoadAddrError.swift in Sources */,
 				5AEFC1802A28876900F30D5E /* RecordAPI.swift in Sources */,
 				5AEFC1892A289F6500F30D5E /* RecordService.swift in Sources */,
 				4DF78445272D3748001DD1DE /* logoViewController.swift in Sources */,
@@ -455,7 +452,6 @@
 				5AEFC1732A287EA500F30D5E /* Record.swift in Sources */,
 				5A07A32A2A29C152009AECE0 /* RoadAddrAPI.swift in Sources */,
 				5AEFC1822A28887700F30D5E /* RequestRecord.swift in Sources */,
-				5A07A32E2A29C69D009AECE0 /* RoadAddressResponse.swift in Sources */,
 				4D9C15E42A29E815007A4E41 /* BaseRepository.swift in Sources */,
 				4DE37DEC2A1F44A200533809 /* PicMapRequest.swift in Sources */,
 			);
@@ -610,14 +606,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R5LLAHFBTA;
+				DEVELOPMENT_TEAM = RK4T596U74;
 				INFOPLIST_FILE = PicMap/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = akay.PicMap;
+				PRODUCT_BUNDLE_IDENTIFIER = sjk.PicMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -632,14 +628,14 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = R5LLAHFBTA;
+				DEVELOPMENT_TEAM = RK4T596U74;
 				INFOPLIST_FILE = PicMap/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = akay.PicMap;
+				PRODUCT_BUNDLE_IDENTIFIER = sjk.PicMap;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

@@ -9,15 +9,14 @@ import Foundation
 import Combine
 
 protocol RoadAddrServiceable {
-	func geocoding(_ lat: Double, _ lng: Double) -> AnyPublisher<RoadAddressError, NetworkError>
+	func revGeocoding(_ lat: Double, _ lng: Double) -> AnyPublisher<RoadAddrResponse, NetworkError>
 }
 
 struct RoadAddrService: HTTPClient, RoadAddrServiceable {
-	func geocoding(_ lat: Double, _ lng: Double) -> AnyPublisher<RoadAddressError, NetworkError> {
+	func revGeocoding(_ lat: Double, _ lng: Double) -> AnyPublisher<RoadAddrResponse, NetworkError> {
 		return sendRequest(endPoint: RoadAddrAPI.getRoadAddr(lat: lat, lng: lng),
-						   params: ["coords": "\(lng),\(lat)",
-									"orders": "addr",
-									"output": "json"],
-						   responseModel: RoadAddressError.self)
+						   params: ["lat": lat.description,
+									"lng": lng.description],
+						   responseModel: RoadAddrResponse.self)
 	}
 }
